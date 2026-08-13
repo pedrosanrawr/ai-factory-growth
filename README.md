@@ -14,18 +14,18 @@ The initial project structure is ready:
 
 ## Team File Ownership
 
-| File                          | Owner                | Responsibility                |
-| ----------------------------- | -------------------- | ----------------------------- |
-| `agents/market_mapping.py`    | Member 1 / Tech Lead | Market Mapping                |
-| `agents/company_ingestion.py` | Valdez               | Company Ingestion             |
-| `agents/moat_analysis.py`     | Espinosa             | Moat Analysis                 |
-| `agents/margin_analysis.py`   | Navarra              | Margin Analysis               |
-| `agents/growth_forecast.py`   | Don                  | Growth Forecast               |
-| `agents/risk_adjustment.py`   | De Jesus             | Risk Adjustment               |
-| `agents/ranking.py`           | Flores               | Ranking                       |
-| `agents/report.py`            | Dones                | Report Generation             |
-| `app.py`                      | UI Lead              | Streamlit UI                  |
-| `schema.py`                   | Tech Lead            | Shared schema / data contract |
+| File                          | Responsibility                |
+| ----------------------------- | ----------------------------- |
+| `agents/market_mapping.py`    | Market Mapping                |
+| `agents/company_ingestion.py` | Company Ingestion             |
+| `agents/moat_analysis.py`     | Moat Analysis                 |
+| `agents/margin_analysis.py`   | Margin Analysis               |
+| `agents/growth_forecast.py`   | Growth Forecast               |
+| `agents/risk_adjustment.py`   | Risk Adjustment               |
+| `agents/ranking.py`           | Ranking                       |
+| `agents/report.py`            | Report Generation             |
+| `app.py`                      | Streamlit UI                  |
+| `schema.py`                   | Shared schema / data contract |
 
 > **Important:** `schema.py` is a shared file. Do not change its field names without informing the entire team.
 
@@ -96,7 +96,7 @@ git push origin [your-branch-name]
 
 After pushing your branch, open a **Pull Request (PR)** on GitHub.
 
-The **Tech Lead** will review the changes before merging them into the main branch.
+The **Owner** will review the changes before merging them into the main branch.
 
 ---
 
