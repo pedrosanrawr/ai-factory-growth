@@ -79,11 +79,29 @@ Only modify the file you own unless you have coordinated with the team beforehan
 
 ### 4. Commit your changes
 
-Use a clear commit message describing what you completed:
+Use the standard commit message format:
 
 ```bash
 git add .
-git commit -m "Complete [agent name] implementation"
+git commit -m "type: message"
+```
+
+Common commit types:
+
+* `feat:` — add a new feature
+* `fix:` — fix a bug
+* `docs:` — update documentation
+* `chore:` — setup or maintenance work
+* `refactor:` — restructure code without changing behavior
+* `test:` — add or update tests
+
+Examples:
+
+```bash
+git commit -m "feat: implement market mapping"
+git commit -m "fix: handle missing company data"
+git commit -m "docs: update README"
+git commit -m "chore: set up project structure"
 ```
 
 ### 5. Push your branch
