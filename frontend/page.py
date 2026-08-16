@@ -67,28 +67,12 @@ def render_app() -> None:
     control_left, control_right = st.columns([3, 2])
     with control_left:
         risk_discount = render_risk_slider()
-        st.markdown("<div style='height: 10px;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='height: 0px;'></div>", unsafe_allow_html=True)
         power_weight = render_power_slider()
     with control_right:
         ranking_priority = render_priority_radio()
 
-    role_filter = st.multiselect(
-        "Filter by AI Factory Role",
-        options=ROLE_OPTIONS,
-        default=ROLE_OPTIONS[:5],
-        label_visibility="collapsed",
-    )
-
-    chip_html = "".join(f'<span class="chip">{role}</span>' for role in role_filter)
-    st.markdown(
-        f"""
-        <div class="chip-box">
-            <div class="chip-title">Filter by AI Factory Role</div>
-            <div class="chip-row">{chip_html}</div>
-        </div>
-        """,
-        unsafe_allow_html=True,
-    )
+    role_filter = render_role_filter_card()
 
     filtered_rows = [row for row in COMPANIES if row["role"] in role_filter] if role_filter else COMPANIES[:]
     ranked_rows = rank_rows(filtered_rows, ranking_priority)
@@ -102,70 +86,89 @@ def render_app() -> None:
 
 def render_risk_slider() -> int:
     current_value = st.session_state.get("risk_discount", 10)
-    st.markdown(
-        f"""
-        <div class="section-card">
-            <div class="range-label">
-                <span>Risk Adjustment Agent Discount</span>
-                <span class="range-value">{current_value}%</span>
+    with st.container(border=True):
+        st.markdown(
+            f"""
+            <div class="control-card-marker slider-control">
+                <div class="range-label">
+                    <span>Risk Adjustment Agent Discount</span>
+                    <span class="range-value">{current_value}%</span>
+                </div>
             </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    value = st.slider(
-        "Risk Adjustment Agent Discount",
-        min_value=0,
-        max_value=30,
-        value=10,
-        step=5,
-        label_visibility="collapsed",
-        key="risk_discount",
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
-    return value
+            """,
+            unsafe_allow_html=True,
+        )
+        return st.slider(
+            "Risk Adjustment Agent Discount",
+            min_value=0,
+            max_value=30,
+            value=10,
+            step=5,
+            label_visibility="collapsed",
+            key="risk_discount",
+        )
 
 
 def render_power_slider() -> float:
     current_value = st.session_state.get("power_weight", 1.2)
-    st.markdown(
-        f"""
-        <div class="section-card">
-            <div class="range-label">
-                <span>Power Efficiency Weighting</span>
-                <span class="range-value">{current_value:.2f}x</span>
+    with st.container(border=True):
+        st.markdown(
+            f"""
+            <div class="control-card-marker slider-control">
+                <div class="range-label">
+                    <span>Power Efficiency Weighting</span>
+                    <span class="range-value">{current_value:.2f}x</span>
+                </div>
             </div>
-        """,
-        unsafe_allow_html=True,
-    )
-    value = st.slider(
-        "Power Efficiency Weighting",
-        min_value=1.0,
-        max_value=2.0,
-        value=1.2,
-        step=0.1,
-        label_visibility="collapsed",
-        key="power_weight",
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
-    return value
+            """,
+            unsafe_allow_html=True,
+        )
+        return st.slider(
+            "Power Efficiency Weighting",
+            min_value=1.0,
+            max_value=2.0,
+            value=1.2,
+            step=0.1,
+            label_visibility="collapsed",
+            key="power_weight",
+        )
 
 
 def render_priority_radio() -> str:
-    st.markdown(
-        """
-        <div class="section-card">
-            <div class="section-card-title">Ranking Agent Priority</div>
-        """,
-        unsafe_allow_html=True,
-    )
-    value = st.radio(
-        "Ranking Agent Priority",
-        options=["Profitability First", "Growth % (Highest)", "TAFGS Score"],
-        index=0,
-        label_visibility="collapsed",
-    )
-    st.markdown("</div>", unsafe_allow_html=True)
-    return value
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div class="control-card-marker radio-control">
+                <div class="section-card-title">Ranking Agent Priority</div>
+            </div>
+            """,
+            unsafe_allow_html=True,
+        )
+        value = st.radio(
+            "Ranking Agent Priority",
+            options=["Profitability First", "Growth % (Highest)", "TAFGS Score"],
+            index=0,
+            label_visibility="collapsed",
+        )
+        st.markdown("<div class='radio-spacer'></div>", unsafe_allow_html=True)
+        return value
+
+
+def render_role_filter_card() -> list[str]:
+    with st.container(border=True):
+        st.markdown(
+            """
+            <div class="section-card-title role-filter-title">Filter by AI Factory Role</div>
+            """,
+            unsafe_allow_html=True,
+        )
+        return st.pills(
+            "Filter by AI Factory Role",
+            options=ROLE_OPTIONS,
+            selection_mode="multi",
+            default=ROLE_OPTIONS[:5],
+            label_visibility="collapsed",
+        )
 
 
 def rank_rows(rows: list[dict], ranking_priority: str) -> list[dict]:
