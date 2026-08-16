@@ -84,6 +84,8 @@ def status_badge(status: str) -> str:
 
 
 def render_ingestion_table(rows: list[dict]) -> str:
+    should_scroll = len(rows) > 8
+    scroll_class = "table-scroll scroll-enabled" if should_scroll else "table-scroll"
     body = []
     for row in rows:
         margin_fill = "fill-red" if row["margin_pct"] < 0 else "fill-purple"
@@ -92,22 +94,24 @@ def render_ingestion_table(rows: list[dict]) -> str:
             f'<td class="company-cell">{row["company"]}</td>'
             f'<td class="role-cell">{row["role"]}</td>'
             f'<td class="small-center"><span class="dot-row">{moat_dots(row["moat"])}</span></td>'
-            f"<td>{mini_bar(row['margin_pct'], 60, margin_fill)}</td>"
-            f"<td>{mini_bar(row['growth_pct'], 60, 'fill-green')}</td>"
+            f'<td class="mini-center">{mini_bar(row["margin_pct"], 60, margin_fill)}</td>'
+            f'<td class="mini-center">{mini_bar(row["growth_pct"], 60, "fill-green")}</td>'
             f'<td class="eff-score">{row["eff_score"]}</td>'
-            f'<td class="risk-cell"><span class="risk-badge">{row["primary_risk"]}</span></td>'
+            f'<td class="risk-cell center-cell"><span class="risk-badge">{row["primary_risk"]}</span></td>'
             "</tr>"
         )
+
     return (
         '<div class="table-card">'
         '<div class="table-header">'
         '<div class="table-header-left"><span class="table-header-icon">◫</span>'
         "<span>Company Ingestion &amp; Metric Editing</span></div></div>"
+        f'<div class="{scroll_class}">'
         '<table class="dashboard-table">'
         "<thead><tr>"
         "<th>Company</th><th>Role</th><th>Moat</th><th>Margin %</th><th>Growth %</th><th>Eff. Score</th><th>Primary Risk</th>"
         "</tr></thead>"
-        f"<tbody>{''.join(body)}</tbody></table></div>"
+        f"<tbody>{''.join(body)}</tbody></table></div></div>"
     )
 
 
@@ -117,6 +121,8 @@ def render_ranking_table(
     risk_discount: int,
     power_weight: float,
 ) -> str:
+    should_scroll = len(rows) > 8
+    scroll_class = "table-scroll scroll-enabled" if should_scroll else "table-scroll"
     body = []
     for index, row in enumerate(rows, start=1):
         body.append(
@@ -128,12 +134,13 @@ def render_ranking_table(
             f'<td class="metric-margin">{row["margin_pct"]:.1f}%</td>'
             f'<td class="metric-growth">{row["growth_pct"]:.1f}%</td>'
             f'<td class="metric-eff">{row["eff_score"]}</td>'
-            f'<td class="risk-cell">{row["primary_risk"]}</td>'
-            f'<td class="status-cell">{status_badge(row["status"])}</td>'
+            f'<td class="risk-cell center-cell">{row["primary_risk"]}</td>'
+            f'<td class="status-cell center-cell">{status_badge(row["status"])}</td>'
             f'<td class="small-center">{row["margin_score"]}</td>'
             f'<td class="metric-tafgs">{row["tafgs"]}</td>'
             "</tr>"
         )
+
     return (
         '<div class="table-card">'
         '<div class="table-header">'
@@ -141,11 +148,12 @@ def render_ranking_table(
         f"<span>Ranking Output: {ranking_priority}</span></div>"
         f'<span class="table-pill">{len(rows)} Factories Sorted</span>'
         "</div>"
+        f'<div class="{scroll_class}">'
         '<table class="dashboard-table">'
         "<thead><tr>"
         "<th>Rank</th><th>Company</th><th>Role</th><th>Moat</th><th>Margin %</th><th>Growth %</th><th>Eff. Score</th><th>Primary Risk</th><th>Status</th><th>Margin</th><th>TAFGS</th>"
         "</tr></thead>"
-        f"<tbody>{''.join(body)}</tbody></table>"
+        f"<tbody>{''.join(body)}</tbody></table></div>"
         '<div class="summary-bar">'
         '<span class="summary-icon">🛡</span>'
         f"<span><strong>Agent Summary:</strong> Risk Discount of {risk_discount}% and Power Efficiency Weight of {power_weight:.1f}x applied globally across scores.</span>"
