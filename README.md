@@ -96,6 +96,7 @@ Common commit types:
 * `chore:` — setup or maintenance work
 * `refactor:` — restructure code without changing behavior
 * `test:` — add or update tests
+* `ui:` — modify ui
 
 Examples:
 
