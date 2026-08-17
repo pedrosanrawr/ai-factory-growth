@@ -44,38 +44,17 @@ git clone https://github.com/[your-username]/ai-factory-growth.git
 cd ai-factory-growth
 ```
 
-### 2. Create your own branch
+## 2. Create your own branch
 
-Each team member should create a branch based on their assigned file:
+Each team member must create their own branch for their work.
+
+For example:
 
 ```bash
-# Market Mapping
-git checkout -b agent/market-mapping
-
-# Company Ingestion
-git checkout -b agent/company-ingestion
-
-# Moat Analysis
-git checkout -b agent/moat-analysis
-
-# Margin Analysis
-git checkout -b agent/margin-analysis
-
-# Growth Forecast
-git checkout -b agent/growth-forecast
-
-# Risk Adjustment
-git checkout -b agent/risk-adjustment
-
-# Ranking
-git checkout -b agent/ranking
-
-# Report
-git checkout -b agent/report
-
-# Streamlit UI
-git checkout -b ui/streamlit-app
-```
+git fetch origin
+git switch main
+git pull origin main
+git switch -c your-branch-name
 
 ### 3. Work only on your assigned file
 
