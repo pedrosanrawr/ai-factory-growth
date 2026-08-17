@@ -3,46 +3,66 @@ Agent 1: Market Mapping Agent
 Owner: Igot
 
 GOAL:
-Assign a capital-stack weight to each company based on its AI Factory segment.
-This weight represents how much of the total AI Factory dollar spend flows
-through that segment (e.g. Compute gets 40%, Networking 20%, etc.)
+Assign a capital-stack weight to each company based on its AI Factory
+segment. This weight represents how much of the total AI Factory dollar
+spend flows through that segment.
 
-VARIABLES YOU WILL USE FROM THE RECORD:
-- record["role"]  →  the company's AI Factory segment (string)
-  Example values: "Compute/Server", "Networking", "Power Infrastructure",
-                  "Cooling Systems", "Engineering & Construction"
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+VARIABLES YOU WILL READ FROM THE RECORD:
+- record["role"]  →  str, the company's AI Factory segment
+  Possible values:
+    "Compute/Server"
+    "Networking"
+    "Power Infrastructure"
+    "Cooling Systems"
+    "Engineering & Construction"
 
-VARIABLE YOU WILL FILL:
-- record["segment_weight"]  →  float between 0.0 and 1.0
-  This is looked up from schema.SEGMENT_WEIGHTS using record["role"] as the key.
+VARIABLES YOU WILL FILL:
+- record["segment_weight"]  →  float (0.0–1.0)
 
-SEGMENT WEIGHTS (defined in schema.py — import and use directly):
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+SEGMENT WEIGHTS (defined in schema.py — always import, never hard-code):
   "Compute/Server"              → 0.40
   "Networking"                  → 0.20
   "Power Infrastructure"        → 0.15
   "Cooling Systems"             → 0.15
   "Engineering & Construction"  → 0.10
 
+These weights reflect the share of total AI Factory capital spend
+per segment. They are fixed — do not change them.
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 WHAT TO DO:
 1. Import SEGMENT_WEIGHTS from schema.
-2. Loop through every record in the input list.
-3. Get the company's role: role = record["role"]
-4. Look it up in SEGMENT_WEIGHTS: record["segment_weight"] = SEGMENT_WEIGHTS.get(role, 0.0)
-   - Use .get() with a default of 0.0 so unknown roles don't crash the app.
+2. Loop through every record.
+3. Get the role: role = record.get("role", "")
+4. Look it up: record["segment_weight"] = SEGMENT_WEIGHTS.get(role, 0.0)
+   — Use .get() with default 0.0 so unknown roles don't crash the app.
 5. Return the updated list.
 
-INPUT:  list[dict]  — list of company records from Company Ingestion Agent
-OUTPUT: list[dict]  — same list, now with segment_weight filled in per record
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+WORKED EXAMPLES:
 
-EXAMPLE:
-  Input:  {"company": "NVIDIA Corporation (NVDA)", "role": "Compute/Server", ...}
-  Output: {"company": "NVIDIA Corporation (NVDA)", "role": "Compute/Server",
-           "segment_weight": 0.40, ...}
+  NVIDIA (NVDA):
+    role = "Compute/Server"
+    segment_weight = SEGMENT_WEIGHTS["Compute/Server"] = 0.40
+
+  Vertiv (VRT):
+    role = "Cooling Systems"
+    segment_weight = SEGMENT_WEIGHTS["Cooling Systems"] = 0.15
+
+  Unknown role:
+    role = "Software"
+    segment_weight = 0.0  (default — not in the AI Factory value chain)
+
+━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+INPUT:  list[dict]  — records from Company Ingestion Agent
+OUTPUT: list[dict]  — same records, segment_weight filled in per record
 
 DO NOT:
-- Change any other field in the record.
 - Hard-code the weights inside this function — always use schema.SEGMENT_WEIGHTS.
-- Return a new list of records — modify in place and return the same list.
+- Change any other field in the record.
+- Crash if role is missing — use .get() with a default.
 """
 
 from schema import SEGMENT_WEIGHTS
