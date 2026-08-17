@@ -78,7 +78,7 @@ Examples:
 git checkout -b frontend/dashboard-control
 git checkout -b frontend/logo
 git checkout -b frontend/sidebar
-git checkout -b agents/map-ingestion
+git checkout -b agents/market-mapping
 git checkout -b agents/company-ingestion
 git checkout -b agents/ranking
 ```
