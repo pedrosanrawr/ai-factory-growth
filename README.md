@@ -82,9 +82,11 @@ Only modify the file you own unless you have coordinated with the team beforehan
 Use the standard commit message format:
 
 ```bash
-git add .
+git add [file-path]
 git commit -m "type: message"
 ```
+
+Only commit the file you worked on. Replace `[file-path]` with the path to your assigned file.
 
 Common commit types:
 
