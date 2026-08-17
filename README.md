@@ -39,22 +39,65 @@ The initial project structure is ready:
 
 ### 1. Clone the repository
 
+If you have not cloned the repository yet:
+
 ```bash
 git clone https://github.com/[your-username]/ai-factory-growth.git
 cd ai-factory-growth
 ```
 
-## 2. Create your own branch
+### 2. Create your own branch
 
-Each team member must create their own branch for their work.
+Each team member must create their **own branch** for their work.
 
-For example:
+First, make sure your local `main` branch is up to date:
 
 ```bash
 git fetch origin
-git switch main
+git checkout main
 git pull origin main
-git switch -c your-branch-name
+```
+
+Then create your own branch:
+
+```bash
+git checkout -b folder/your-branch-name
+```
+
+Use the following naming convention:
+
+```text
+folder/description
+```
+
+The `folder` should indicate the area of the project you are working on, while the description should clearly identify the specific task.
+
+Examples:
+
+```bash
+git checkout -b frontend/dashboard-control
+git checkout -b frontend/logo
+git checkout -b frontend/sidebar
+git checkout -b agents/map-ingestion
+git checkout -b agents/company-ingestion
+git checkout -b agents/ranking
+```
+
+After creating your branch, all of your changes should be committed and pushed to **your own branch**.
+
+Your Pull Request should target:
+
+```text
+your-branch-name → main
+```
+
+For example:
+
+```text
+frontend/dashboard-control → main
+```
+
+The Owner will review the Pull Request before merging it into `main`.
 
 ### 3. Work only on your assigned file
 
@@ -69,7 +112,7 @@ git add [file-path]
 git commit -m "type: message"
 ```
 
-Only commit the file you worked on. Replace `[file-path]` with the path to your assigned file.
+Only commit the file(s) you worked on. Replace `[file-path]` with the path to your assigned file.
 
 Common commit types:
 
@@ -79,7 +122,7 @@ Common commit types:
 * `chore:` — setup or maintenance work
 * `refactor:` — restructure code without changing behavior
 * `test:` — add or update tests
-* `ui:` — modify ui
+* `ui:` — modify UI
 
 Examples:
 
@@ -88,19 +131,48 @@ git commit -m "feat: implement market mapping"
 git commit -m "fix: handle missing company data"
 git commit -m "docs: update README"
 git commit -m "chore: set up project structure"
+git commit -m "ui: improve dashboard layout"
 ```
 
 ### 5. Push your branch
 
+Push your changes to your own branch:
+
 ```bash
-git push origin [your-branch-name]
+git push -u origin your-branch-name
+```
+
+For example:
+
+```bash
+git push -u origin frontend/dashboard-control
 ```
 
 ### 6. Open a Pull Request
 
 After pushing your branch, open a **Pull Request (PR)** on GitHub.
 
-The **Owner** will review the changes before merging them into the main branch.
+Your Pull Request should always target the `main` branch:
+
+```text
+your-branch-name → main
+```
+
+For example:
+
+```text
+frontend/dashboard-control → main
+```
+
+The **Owner will review the changes before merging the Pull Request into `main`**.
+
+The Owner may:
+
+1. Review the code.
+2. Test the changes.
+3. Request changes if necessary.
+4. Approve the Pull Request.
+5. Merge the Pull Request into `main`.
 
 ---
 
