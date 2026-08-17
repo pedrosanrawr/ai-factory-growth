@@ -14,7 +14,7 @@ def empty_record() -> dict:
         "growth_catalysts": "",
         "risk_notes": "",
         "source_links": "",
-        "eff_score": 0,
+        "eff_score": 1,
 
         # market_mapping.py
         "segment_weight": 0.0,

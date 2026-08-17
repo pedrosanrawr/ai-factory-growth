@@ -24,7 +24,11 @@ The initial project structure is ready:
 | `agents/risk_adjustment.py`   | Risk Adjustment               |
 | `agents/ranking.py`           | Ranking                       |
 | `agents/report.py`            | Report Generation             |
-| `app.py`                      | Streamlit UI                  |
+| `app.py`                      | Streamlit entry point         |
+| `frontend/page.py`            | UI layout and control wiring  |
+| `frontend/components.py`      | Dashboard tables and export   |
+| `frontend/styles.py`          | Dashboard styling             |
+| `frontend/data.py`            | Temporary mock data (UI only) |
 | `schema.py`                   | Shared schema / data contract |
 
 > **Important:** `schema.py` is a shared file. Do not change its field names without informing the entire team.
@@ -213,7 +217,7 @@ CSV, Ranking uses it, and valid values are integers from 1 to 5.
 
 ---
 
-## Project Structure
+## Core Pipeline Structure
 
 ```text
 ai-factory-growth/
@@ -235,6 +239,36 @@ ai-factory-growth/
 ```
 
 ---
+
+## Current Project Structure
+
+```text
+ai-factory-growth/
+|-- agents/                    # One module per analysis agent
+|   |-- company_ingestion.py
+|   |-- market_mapping.py
+|   |-- moat_analysis.py
+|   |-- margin_analysis.py
+|   |-- growth_forecast.py
+|   |-- risk_adjustment.py
+|   |-- ranking.py
+|   `-- report.py
+|-- frontend/                  # Streamlit presentation layer
+|   |-- page.py                # Layout, controls, and pipeline handoff
+|   |-- components.py          # Tables, export, and reusable UI helpers
+|   |-- styles.py              # CSS styling
+|   `-- data.py                # Temporary mock data; remove after integration
+|-- data/
+|   `-- companies.csv          # Source dataset for Company Ingestion
+|-- assets/
+|   `-- logo.png
+|-- .streamlit/
+|   `-- config.toml
+|-- app.py                     # Streamlit entry point
+|-- schema.py                  # Shared record contract
+|-- requirements.txt
+`-- README.md
+```
 
 ## Goal
 

@@ -1,6 +1,6 @@
 """
 Agent 1: Market Mapping Agent
-Owner: Member 1 / Tech Lead
+Owner: Igot
 
 GOAL:
 Assign a capital-stack weight to each company based on its AI Factory segment.
