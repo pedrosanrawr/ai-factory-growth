@@ -169,6 +169,35 @@ This ensures that the outputs from different agents can be connected together wi
 
 ---
 
+## Dashboard Control Contract
+
+The Streamlit controls are pipeline inputs, not display-only settings. The UI
+owner owns the widgets and passes values to agents; each agent owner implements
+only the calculation in their assigned file.
+
+| Control | UI responsibility | Agent responsibility |
+| --- | --- | --- |
+| Risk Adjustment Agent Discount (0-30%) | Pass `risk_discount` to `risk_adjustment.run(...)`. | Risk Adjustment uses it to calculate `risk_multiplier` and `adjusted_growth_pct`. |
+| Power Efficiency Weighting (1.0-2.0x) | Pass `power_weight` to `ranking.run(...)`. | Ranking uses `eff_score` and the weight to calculate `tafgs_score`. |
+| Ranking Agent Priority | Pass `ranking_priority` to `ranking.run(...)`. | Ranking selects the requested sort order. |
+| AI Factory Role filter | Filter records before ranking. | No agent calculation changes. |
+
+Use this pipeline order in the UI:
+
+```python
+records = adjust_risk(records, risk_discount_pct=risk_discount)
+top_20 = rank_companies(
+    records,
+    ranking_priority=ranking_priority,
+    power_efficiency_weight=power_weight,
+)
+```
+
+`eff_score` is a required shared field: Company Ingestion reads it from the
+CSV, Ranking uses it, and valid values are integers from 1 to 5.
+
+---
+
 ## Important Team Rules
 
 > **1. `schema.py` is the contract for all agents.**
