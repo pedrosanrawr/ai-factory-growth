@@ -221,29 +221,6 @@ CSV, Ranking uses it, and valid values are integers from 1 to 5.
 
 ```text
 ai-factory-growth/
-│
-├── agents/
-│   ├── market_mapping.py
-│   ├── company_ingestion.py
-│   ├── moat_analysis.py
-│   ├── margin_analysis.py
-│   ├── growth_forecast.py
-│   ├── risk_adjustment.py
-│   ├── ranking.py
-│   └── report.py
-│
-├── app.py
-├── schema.py
-├── requirements.txt
-└── README.md
-```
-
----
-
-## Current Project Structure
-
-```text
-ai-factory-growth/
 |-- agents/                    # One module per analysis agent
 |   |-- company_ingestion.py
 |   |-- market_mapping.py
@@ -269,6 +246,8 @@ ai-factory-growth/
 |-- requirements.txt
 `-- README.md
 ```
+
+---
 
 ## Goal
 
