@@ -78,11 +78,16 @@ DO NOT:
   that is handled separately by the Ranking Agent.
 - Change any other field.
 - Crash if values are missing — use .get() with defaults.
-"""
 
-def run(records: list[dict]) -> list[dict]:
+CONTROLLER CONTRACT (takes precedence over the earlier placeholder example):
+The UI passes its 0-30 Risk Adjustment Agent Discount slider value as
+ risk_discount_pct. Implement the multiplier as:
+    1 - (average_risk * clamp(risk_discount_pct, 0, 30) / 100).
+Efficiency weighting is applied later by the Ranking Agent, not here.
+"""
+def run(records: list[dict], risk_discount_pct: float = 10.0) -> list[dict]:
     # TODO: implement this agent
-    # Loop, apply 5-step formula, fill risk_multiplier
+    # Clamp risk_discount_pct to 0-30, then calculate risk_multiplier.
     # and adjusted_growth_pct, return records
     return records
 

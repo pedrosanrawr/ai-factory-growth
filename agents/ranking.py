@@ -72,10 +72,20 @@ DO NOT:
 - Include Efficiency Score in the TAFGS computation.
 - Use growth_forecast_pct (raw) — always use adjusted_growth_pct.
 - Apply any sidebar discount here — the formula is clean.
+
+CONTROLLER CONTRACT (takes precedence over the earlier placeholder example):
+The UI passes its 1.0-2.0 Power Efficiency Weighting slider value as
+  power_efficiency_weight. Calculate:
+    base_tafgs = moat_score * margin_score * (adjusted_growth_pct / 100)
+    efficiency_factor = 1 + ((clamp(eff_score, 1, 5) - 1) / 4) *
+                        (clamp(power_efficiency_weight, 1.0, 2.0) - 1)
+    tafgs_score = base_tafgs * efficiency_factor
+This rewards higher efficiency without applying the risk discount twice.
 """
 
 def run(records: list[dict],
-        ranking_priority: str = "TAFGS Score") -> list[dict]:
+        ranking_priority: str = "TAFGS Score",
+        power_efficiency_weight: float = 1.2) -> list[dict]:
     # TODO: implement this agent
     # 1. Loop, compute tafgs_score, fill status
     # 2. Sort by ranking_priority
