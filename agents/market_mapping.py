@@ -69,21 +69,9 @@ from schema import SEGMENT_WEIGHTS
 
 
 def run(records: list[dict]) -> list[dict]:
-    # TODO: implement this agent
-    # Loop through records, assign segment_weight from SEGMENT_WEIGHTS
+    """Assign the schema-defined weight for each record's AI Factory role."""
     for record in records:
-      role = record.get("role", "")
-      record["segment_weight"] = SEGMENT_WEIGHTS.get(role, 0.0)
-    # Return the updated records list
+        role = record.get("role", "")
+        record["segment_weight"] = SEGMENT_WEIGHTS.get(role, 0.0)
+
     return records
-
-
-#not sure if dapat no side effects sha since ung above mutates in place. If no side effects use the function below:
-# def run(records: list[dict]) -> list[dict]:
-#     updated = []
-#     for record in records:
-#         new_record = dict(record)
-#         role = new_record.get("role", "")
-#         new_record["segment_weight"] = SEGMENT_WEIGHTS.get(role, 0.0)
-#         updated.append(new_record)
-#     return updated

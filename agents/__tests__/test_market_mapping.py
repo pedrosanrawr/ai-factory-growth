@@ -1,22 +1,38 @@
-from schema import empty_record
+import unittest
+
 from agents.market_mapping import run
-def make_record(role):
-    r = empty_record()
-    r["role"] = role
-    r["company"] = f"Test-{role}"
-    return r
+from schema import SEGMENT_WEIGHTS, empty_record
 
-records = [
-    make_record("Compute/Server"),
-    make_record("Networking"),
-    make_record("Power Infrastructure"),
-    make_record("Cooling Systems"),
-    make_record("Engineering & Construction"),
-    make_record("Software"), # unknown role --> default to 0.0
-    empty_record(), # missing/blank role -> default to 0.0
-]
 
-result = run(records)
+def make_record(role: str) -> dict:
+    record = empty_record()
+    record["role"] = role
+    record["company"] = f"Test-{role}"
+    return record
 
-for r in result:
-    print(f"{r['company'] or '(blank)':30} role={r['role']:30} weight={r['segment_weight']}")
+
+class TestMarketMapping(unittest.TestCase):
+    def test_assigns_weight_for_every_known_role(self) -> None:
+        records = [make_record(role) for role in SEGMENT_WEIGHTS]
+
+        result = run(records)
+
+        self.assertIs(result, records)
+        for record in result:
+            with self.subTest(role=record["role"]):
+                self.assertEqual(
+                    record["segment_weight"],
+                    SEGMENT_WEIGHTS[record["role"]],
+                )
+
+    def test_assigns_zero_for_unknown_or_blank_role(self) -> None:
+        records = [make_record("Software"), empty_record()]
+
+        result = run(records)
+
+        self.assertEqual(result[0]["segment_weight"], 0.0)
+        self.assertEqual(result[1]["segment_weight"], 0.0)
+
+
+if __name__ == "__main__":
+    unittest.main()
