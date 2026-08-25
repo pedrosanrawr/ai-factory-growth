@@ -1,3 +1,25 @@
+"""Load ``data/companies.csv`` into the shared company-record structure.
+
+This is the first agent in the pipeline. It is the only agent that reads the
+CSV directly; every later agent receives and updates the records returned by
+``run``.
+
+CSV-to-schema mapping:
+    Company Name + Ticker    -> company
+    Primary AI Factory Role  -> role
+    Operating Margin %       -> operating_margin_pct
+    Revenue Exposure %       -> revenue_exposure_pct
+    Moat Score               -> moat_score
+    Growth Forecast %        -> growth_forecast_pct
+    Concentration Risk       -> concentration_risk
+    Cyclicality Risk         -> cyclicality_risk
+    Execution Risk           -> execution_risk
+    Efficiency Score         -> eff_score
+
+The agent returns records created with ``empty_record()``, skips blank company
+rows, and safely defaults invalid numeric values to zero.
+"""
+
 import re
 import pandas as pd
 from schema import empty_record
