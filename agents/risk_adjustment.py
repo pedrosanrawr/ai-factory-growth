@@ -116,20 +116,56 @@ wires in the real pipeline, they must call:
     records = adjust_risk(records, risk_discount_pct=risk_discount)
 """
 
-def run(records: list[dict], risk_discount_pct: float = 10.0) -> list[dict]:
-    # TODO: implement this agent
-    # 1. Loop through records
-    # 2. Get risk sub-scores, eff_score, growth_forecast_pct
-    # 3. Clamp sub-scores to 0-1, clamp risk_discount_pct to 0-30
-    # 4. Apply 6-step formula
-    # 5. Write risk_multiplier and adjusted_growth_pct into record
-    # 6. Return updated records
-    return records
-
-
 def _clamp(value, lo=0.0, hi=1.0) -> float:
     """Clamp a value between lo and hi, safely handling non-numeric input."""
     try:
         return max(lo, min(hi, float(value)))
     except (ValueError, TypeError):
         return lo
+ 
+def run(records: list[dict], risk_discount_pct: float = 10.0) -> list[dict]:
+    # Clamp the global slider value once (0-30), reused for every record.
+    try:
+        global_pct = float(risk_discount_pct)
+    except (ValueError, TypeError):
+        global_pct = 10.0
+    global_pct = max(0.0, min(30.0, global_pct))
+    global_discount = 1 - (global_pct / 100)
+ 
+    for record in records:
+        growth_forecast_pct = record.get("growth_forecast_pct", 0.0) or 0.0
+        try:
+            growth_forecast_pct = float(growth_forecast_pct)
+        except (ValueError, TypeError):
+            growth_forecast_pct = 0.0
+ 
+        concentration_risk = _clamp(record.get("concentration_risk", 0.0))
+        cyclicality_risk = _clamp(record.get("cyclicality_risk", 0.0))
+        execution_risk = _clamp(record.get("execution_risk", 0.0))
+ 
+        try:
+            eff_score = float(record.get("eff_score", 1))
+        except (ValueError, TypeError):
+            eff_score = 1.0
+        eff_score = max(1.0, min(5.0, eff_score))
+ 
+        # Step 1: Average Risk Score
+        avg_risk = (concentration_risk + cyclicality_risk + execution_risk) / 3
+ 
+        # Step 2: Base Risk Multiplier
+        base_multiplier = 1 - (avg_risk * 0.3)
+ 
+        # Step 3: Efficiency Modifier
+        eff_modifier = 1 + ((eff_score - 1) / 4) * 0.1
+ 
+        # Step 4: Per-company Risk Multiplier
+        risk_multiplier = base_multiplier * eff_modifier
+ 
+        # Step 6: Final Adjusted Growth %
+        adjusted_growth_pct = growth_forecast_pct * risk_multiplier * global_discount
+ 
+        record["risk_multiplier"] = round(risk_multiplier, 4)
+        record["adjusted_growth_pct"] = round(adjusted_growth_pct, 4)
+ 
+    return records
+ 
