@@ -67,8 +67,20 @@ DO NOT:
 """
 
 
+def _to_float(value, default: float = 0.0) -> float:
+    """Safe float parser with default fallback."""
+    try:
+        return float(value) if value is not None else default
+    except (ValueError, TypeError):
+        return default
+
+
+
 def run(records: list[dict]) -> list[dict]:
-    # TODO: implement this agent
-    # Loop, validate growth_forecast_pct, clamp to -100 to 500,
-    # round to 4 decimal places, return records
+    """Validate and clamp growth_forecast_pct to [-100, 500] range."""
+    for record in records:
+        growth = _to_float(record.get("growth_forecast_pct", 0.0), 0.0)
+        growth = max(-100.0, min(500.0, growth))
+        record["growth_forecast_pct"] = round(growth, 4)
+
     return records
