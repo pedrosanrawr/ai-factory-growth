@@ -67,10 +67,14 @@ DO NOT:
 """
 
 
+import math
+
+
 def _to_float(value, default: float = 0.0) -> float:
     """Safe float parser with default fallback."""
     try:
-        return float(value) if value is not None else default
+        parsed = float(value) if value is not None else default
+        return parsed if math.isfinite(parsed) else default
     except (ValueError, TypeError):
         return default
 
