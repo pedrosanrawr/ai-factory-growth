@@ -70,6 +70,13 @@ DO NOT:
 
 
 def run(records: list[dict]) -> list[dict]:
-    # TODO: implement this agent
-    # Loop, validate moat_score, clamp to 0-5, return records
+    """Validate and clamp each record's moat_score to the 0-5 range."""
+    for record in records:
+        score = record.get("moat_score", 0)
+        try:
+            score = int(score)
+        except (ValueError, TypeError):
+            score = 0
+        score = max(0, min(5, score))
+        record["moat_score"] = score
     return records
