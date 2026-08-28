@@ -118,8 +118,7 @@ def render_ingestion_table(rows: list[dict]) -> str:
 def render_ranking_table(
     rows: list[dict],
     ranking_priority: str,
-    risk_discount: int,
-    power_weight: float,
+    agent_summary: str,
 ) -> str:
     should_scroll = len(rows) > 8
     scroll_class = "table-scroll scroll-enabled" if should_scroll else "table-scroll"
@@ -156,6 +155,6 @@ def render_ranking_table(
         f"<tbody>{''.join(body)}</tbody></table></div>"
         '<div class="summary-bar">'
         '<span class="summary-icon">🛡</span>'
-        f"<span><strong>Agent Summary:</strong> Risk Discount of {risk_discount}% and Power Efficiency Weight of {power_weight:.1f}x applied globally across scores.</span>"
+        f"<span><strong>Agent Summary:</strong> {agent_summary}</span>"
         "</div></div>"
     )

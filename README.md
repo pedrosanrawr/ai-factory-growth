@@ -4,11 +4,15 @@ This repository is the shared codebase for the group's **AI Factory Growth** pro
 
 ## Project Status
 
-The initial project structure is ready:
+The CSV-backed analysis pipeline is ready:
 
 * **`schema.py`** — Contains the shared company record structure that all agents must follow.
-* **`app.py`** — A simple Streamlit starter app so the project can already run locally.
-* **`agents/`** — Contains placeholder files for each assigned agent. Each file includes comments describing what the assigned group member should build.
+* **`app.py`** — Launches the Streamlit dashboard.
+* **`agents/`** — Contains the eight analysis modules that process company records in sequence.
+
+
+The agents are implemented and the dashboard now runs the real
+`data/companies.csv` pipeline. It no longer uses hard-coded frontend data.
 
 ---
 
@@ -28,7 +32,6 @@ The initial project structure is ready:
 | `frontend/page.py`            | UI layout and control wiring  |
 | `frontend/components.py`      | Dashboard tables and export   |
 | `frontend/styles.py`          | Dashboard styling             |
-| `frontend/data.py`            | Temporary mock data (UI only) |
 | `schema.py`                   | Shared schema / data contract |
 
 > **Important:** `schema.py` is a shared file. Do not change its field names without informing the entire team.
@@ -256,7 +259,6 @@ ai-factory-growth/
 |   |-- page.py                # Layout, controls, and pipeline handoff
 |   |-- components.py          # Tables, export, and reusable UI helpers
 |   |-- styles.py              # CSS styling
-|   `-- data.py                # Temporary mock data; remove after integration
 |-- data/
 |   `-- companies.csv          # Source dataset for Company Ingestion
 |-- assets/
