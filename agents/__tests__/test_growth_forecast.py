@@ -1,4 +1,5 @@
 import unittest
+import math
 
 from agents.growth_forecast import run
 
@@ -45,6 +46,12 @@ class TestGrowthForecast(unittest.TestCase):
         self.assertEqual(result[0]["growth_forecast_pct"], 0.0)
         self.assertEqual(result[1]["growth_forecast_pct"], 0.0)
         self.assertEqual(result[2]["growth_forecast_pct"], 0.0)
+
+    def test_defaults_nan_to_zero(self) -> None:
+        result = run([{"growth_forecast_pct": float("nan")}])
+
+        self.assertFalse(math.isnan(result[0]["growth_forecast_pct"]))
+        self.assertEqual(result[0]["growth_forecast_pct"], 0.0)
 
     def test_handles_missing_field(self) -> None:
         records = [{}]
