@@ -1,21 +1,48 @@
 import streamlit as st
 import base64
 
+from agents.company_ingestion import run as ingest_companies
+from agents.growth_forecast import run as validate_growth
+from agents.margin_analysis import run as analyze_margin
+from agents.market_mapping import run as map_segments
+from agents.moat_analysis import run as analyze_moat
+from agents.ranking import run as rank_companies
+from agents.report import run as generate_report
+from agents.risk_adjustment import run as adjust_risk
 from frontend.components import (
     build_export_csv,
     load_logo_html,
     render_ingestion_table,
     render_ranking_table,
 )
-from frontend.data import COMPANIES, ROLE_OPTIONS
 from frontend.styles import APP_CSS
+from schema import SEGMENT_WEIGHTS
+
+
+ROLE_OPTIONS = list(SEGMENT_WEIGHTS)
 
 
 def render_app() -> None:
     st.markdown(APP_CSS, unsafe_allow_html=True)
 
     logo_img = load_logo_html()
-    csv_data = build_export_csv(COMPANIES)
+    risk_discount = st.session_state.get("risk_discount", 10)
+    power_weight = st.session_state.get("power_weight", 1.2)
+    ranking_priority = st.session_state.get("ranking_priority", "Profitability First")
+    role_filter = st.session_state.get("role_filter", ROLE_OPTIONS[:])
+
+    try:
+        ingestion_rows, ranked_rows, agent_summary = run_pipeline(
+            risk_discount=risk_discount,
+            power_weight=power_weight,
+            ranking_priority=ranking_priority,
+            role_filter=role_filter,
+        )
+    except (FileNotFoundError, ValueError) as error:
+        st.error(f"Unable to load the company analysis pipeline: {error}")
+        return
+
+    csv_data = build_export_csv(ranked_rows)
     csv_base64 = base64.b64encode(csv_data).decode("utf-8")
 
     st.markdown(
@@ -74,12 +101,9 @@ def render_app() -> None:
 
     role_filter = render_role_filter_card()
 
-    filtered_rows = [row for row in COMPANIES if row["role"] in role_filter] if role_filter else COMPANIES[:]
-    ranked_rows = rank_rows(filtered_rows, ranking_priority)
-
-    st.markdown(render_ingestion_table(filtered_rows), unsafe_allow_html=True)
+    st.markdown(render_ingestion_table(ingestion_rows), unsafe_allow_html=True)
     st.markdown(
-        render_ranking_table(ranked_rows, ranking_priority, risk_discount, power_weight),
+        render_ranking_table(ranked_rows, ranking_priority, agent_summary),
         unsafe_allow_html=True,
     )
 
@@ -149,6 +173,7 @@ def render_priority_radio() -> str:
             options=["Profitability First", "Growth % (Highest)", "TAFGS Score"],
             index=0,
             label_visibility="collapsed",
+            key="ranking_priority",
         )
         st.markdown("<div class='radio-spacer'></div>", unsafe_allow_html=True)
         return value
@@ -168,16 +193,40 @@ def render_role_filter_card() -> list[str]:
             selection_mode="multi",
             default=ROLE_OPTIONS[:5],
             label_visibility="collapsed",
+            key="role_filter",
         )
 
 
-def rank_rows(rows: list[dict], ranking_priority: str) -> list[dict]:
-    if ranking_priority == "Profitability First":
-        return sorted(
-            rows,
-            key=lambda row: (row["status"] == "Profitable", row["margin_score"], row["tafgs"]),
-            reverse=True,
-        )
-    if ranking_priority == "Growth % (Highest)":
-        return sorted(rows, key=lambda row: row["growth_pct"], reverse=True)
-    return sorted(rows, key=lambda row: row["tafgs"], reverse=True)
+def run_pipeline(
+    risk_discount: float,
+    power_weight: float,
+    ranking_priority: str,
+    role_filter: list[str],
+) -> tuple[list[dict], list[dict], str]:
+    """Run the real CSV-backed agent pipeline for the dashboard."""
+    records = ingest_companies()
+    records = map_segments(records)
+    records = analyze_moat(records)
+    records = analyze_margin(records)
+    records = validate_growth(records)
+    records = adjust_risk(records, risk_discount_pct=risk_discount)
+
+    if role_filter:
+        records = [record for record in records if record["role"] in role_filter]
+
+    ranked_records = rank_companies(
+        records,
+        ranking_priority=ranking_priority,
+        power_efficiency_weight=power_weight,
+    )
+    ingestion_rows, _ = generate_report(
+        records,
+        risk_discount_pct=risk_discount,
+        power_efficiency_weight=power_weight,
+    )
+    ranked_rows, agent_summary = generate_report(
+        ranked_records,
+        risk_discount_pct=risk_discount,
+        power_efficiency_weight=power_weight,
+    )
+    return ingestion_rows, ranked_rows, agent_summary
