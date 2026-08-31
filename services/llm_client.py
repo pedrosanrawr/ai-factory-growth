@@ -1,8 +1,16 @@
-"""One safe, shared Gemini LLM connection for all project agents.
+"""DONES work file: shared Gemini integration.
 
-This module deliberately does not make a request at import time. An agent must
-explicitly call ``ask_llm`` so opening the Streamlit dashboard does not consume
-the free API quota.
+Steps:
+1. Keep provider initialization and API-key loading lazy.
+2. Add one structured JSON helper; agents must not call the SDK directly.
+3. Return a typed, safe failure for timeout, provider, and malformed-output
+   errors so callers can use their deterministic fallback.
+4. Keep credentials in environment variables and mock all provider calls in
+   tests.
+5. Test configured, missing-key, valid, timeout, and malformed-response paths.
+
+Done when no analysis agent needs to call the provider SDK directly and failed
+calls can safely use deterministic fallbacks.
 """
 
 from __future__ import annotations
