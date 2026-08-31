@@ -4,7 +4,14 @@ Follow the TODOs below in order. Keep legacy ``source_links`` compatible.
 
 Goal: make every generated research claim traceable to stored evidence.
 
-1. Propose new shared fields before editing `schema.py`; use additive fields such as `evidence`, `research_as_of`, and `analysis_status` rather than renaming current fields.
+1. Use only the evidence-related field names added to `schema.py` by the
+   project owner. Do not add, rename, or modify fields in `schema.py`.
+
+    "evidence": [],
+    "research_as_of": "",
+    "analysis_status": "unavailable",
+    "analysis_confidence": None,
+    
 2. Define an evidence item with at least URL, source title, retrieved date, published date when known, excerpt/claim support, and source type.
 3. Implement an evidence-store service that validates URLs, de-duplicates entries, and preserves records by company identifier.
 4. Define an explicit status for `verified`, `needs_review`, and `unavailable`; do not label unverified model output as verified.
@@ -15,7 +22,8 @@ Goal: make every generated research claim traceable to stored evidence.
 
 def store_evidence(company: str, evidence: list[dict]) -> list[dict]:
     """Validate, de-duplicate, and store evidence for one company."""
-    # TODO(1): Agree additive schema fields with the team before editing schema.py.
+    # TODO(1): Read the project owner's approved evidence fields from schema.py.
+    #          Do not add, rename, or modify any schema.py field.
     # TODO(2): Define required evidence fields: URL, title, dates, source type,
     #          excerpt, and supported claim.
     # TODO(3): Validate URLs and reject incomplete evidence safely.

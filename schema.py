@@ -16,6 +16,15 @@ def empty_record() -> dict:
         "source_links": "",
         "eff_score": 1,
 
+        # evidence: list of citation dictionaries managed by evidence_store.py
+        "evidence": [],
+        # ISO 8601 date/time for the research used by the analysis
+        "research_as_of": "",
+        # One of: unavailable, fallback, needs_review, verified
+        "analysis_status": "unavailable",
+        # 0.0-1.0 confidence supplied by an evidence-backed analysis
+        "analysis_confidence": None,
+
         # market_mapping.py
         "segment_weight": 0.0,
 
