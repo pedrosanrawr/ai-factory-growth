@@ -1,4 +1,4 @@
-"""Member 1 work file: shared Gemini integration.
+"""DONES work file: shared Gemini integration.
 
 Steps:
 1. Keep provider initialization and API-key loading lazy.

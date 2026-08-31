@@ -1,4 +1,4 @@
-"""Member 4 work file: evidence-grounded moat analysis.
+"""ESPINOSA work file: evidence-grounded moat analysis.
 
 Steps:
 1. Keep ``run(records)`` compatible with the existing workflow.
@@ -12,7 +12,6 @@ Do not change the TAFGS formula, rank records, or remove CSV compatibility.
 Done when the analysis is explainable, evidence-linked, and remains compatible
 with CSV-only ranking.
 """
-
 
 def run(records: list[dict]) -> list[dict]:
     """Validate and clamp each record's moat_score to the 0-5 range."""

@@ -1,4 +1,4 @@
-"""Member 7 work file: LangGraph workflow and cross-validation.
+"""NAVARRA work file: LangGraph workflow and cross-validation.
 
 Follow the TODOs below in order. Do not change the TAFGS formula or add
 unbounded retries.
@@ -13,7 +13,6 @@ Goal: replace the hand-wired sequence with one observable workflow and an explic
 6. Add graph tests for normal flow, model failure, invalid evidence, validation failure, and regression equivalence with the current pipeline.
 
 """
-
 
 def build_workflow():
     """Build and return the LangGraph workflow when implementation is complete."""

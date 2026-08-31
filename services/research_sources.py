@@ -1,4 +1,4 @@
-"""Member 2 work file: external research-source adapters.
+"""FLORES work file: external research-source adapters.
 
 Follow the TODOs below in order. Do not add a provider key or dependency
 without team approval.
@@ -13,7 +13,6 @@ Goal: replace manual research-only inputs with a provider-neutral, testable sour
 6. Test normalization, network failure, invalid provider payloads, and a fixture-based successful response without live network calls.
 
 """
-
 
 def fetch_company_research(company: str) -> list[dict]:
     """Return normalized candidate research documents for one company."""

@@ -1,4 +1,4 @@
-"""Member 6 work file: evidence-grounded risk inputs.
+"""DE JESUS work file: evidence-grounded risk inputs.
 
 Steps:
 1. Keep the existing risk multiplier and global discount formulas unchanged.
@@ -13,7 +13,6 @@ Steps:
 Do not let model output calculate risk_multiplier, adjusted growth, rank, or
 TAFGS. The deterministic risk formula remains the final authority.
 """
-
 
 def _clamp(value, lo=0.0, hi=1.0) -> float:
     """Clamp a value between lo and hi, safely handling non-numeric input."""

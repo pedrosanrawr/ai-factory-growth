@@ -1,4 +1,4 @@
-"""Member 3 work file: evidence and citation storage.
+"""IGOT work file: evidence and citation storage.
 
 Follow the TODOs below in order. Keep legacy ``source_links`` compatible.
 

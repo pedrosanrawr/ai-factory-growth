@@ -1,4 +1,4 @@
-"""Member 5 work file: evidence-grounded three-year growth analysis.
+"""DON work file: evidence-grounded three-year growth analysis.
 
 Steps:
 1. Keep ``run(records)`` and the existing ``[-100, 500]`` range guard.

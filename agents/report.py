@@ -1,4 +1,4 @@
-"""Member 8 work file: research reporting and refresh visibility.
+"""DONES work file: research reporting and refresh visibility.
 
 Steps:
 1. Preserve every existing frontend output key and ranking order.
@@ -14,12 +14,9 @@ Done when users can see the evidence and whether analysis is verified,
 fallback-based, or needs review.
 """
 
-
-def run(
-    records: list[dict],
-    risk_discount_pct: float = 10.0,
-    power_efficiency_weight: float = 1.2,
-) -> tuple[list[dict], str]:
+def run(records: list[dict],
+        risk_discount_pct: float = 10.0,
+        power_efficiency_weight: float = 1.2) -> tuple[list[dict], str]:
     """Build display profiles and a summary without changing ranking order."""
     profiles = []
 

@@ -1,4 +1,4 @@
-"""Member 8 work file: controlled quarterly research refresh.
+"""VALDEZ work file: controlled quarterly research refresh.
 
 Follow the TODOs below in order. Never overwrite ``data/companies.csv``
 implicitly.
@@ -12,7 +12,6 @@ Goal: provide a controlled refresh process and expose evidence/status in the app
 5. Add a short operator runbook in the README: quarterly steps, review criteria, backup/rollback process, and required tests.
 6. Test dry-run, no-change refresh, proposed-change report, report serialization, and popup rendering for verified, fallback, and needs-review states.
 """
-
 
 def refresh_research() -> None:
     """Prepare the quarterly research refresh process."""
