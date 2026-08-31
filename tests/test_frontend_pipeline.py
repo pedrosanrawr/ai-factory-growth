@@ -1,5 +1,6 @@
 import unittest
 
+from frontend.components import render_ranking_table
 from frontend.page import run_pipeline
 
 
@@ -15,7 +16,18 @@ class TestFrontendPipeline(unittest.TestCase):
         self.assertEqual(len(ingestion_rows), 20)
         self.assertEqual(len(ranked_rows), 20)
         self.assertEqual(ranked_rows[0]["company"], "NVIDIA Corporation (NVDA)")
+        self.assertIn("segment_weight", ranked_rows[0])
+        self.assertIn("revenue_exposure_pct", ranked_rows[0])
+        self.assertIn("moat_notes", ranked_rows[0])
+        self.assertIn("source_links", ranked_rows[0])
         self.assertIn("Risk Discount of 10%", summary)
+        table_html = render_ranking_table(ranked_rows, "TAFGS Score", summary)
+        self.assertIn("Profile</th>", table_html)
+        self.assertIn("profile-view-link", table_html)
+        self.assertNotIn("?profile=", table_html)
+        self.assertIn('href="#company-profile-0"', table_html)
+        self.assertIn("profile-modal-close", table_html)
+        self.assertIn('profile-modal-backdrop" aria-hidden="true', table_html)
 
     def test_controls_affect_the_expected_pipeline_stage(self) -> None:
         base_rows, base_ranked, _ = run_pipeline(10, 1.2, "TAFGS Score", [])
