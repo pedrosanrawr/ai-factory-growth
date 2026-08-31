@@ -13,7 +13,6 @@ Done when the analysis is explainable, evidence-linked, and remains compatible
 with CSV-only ranking.
 """
 
-
 def run(records: list[dict]) -> list[dict]:
     """Validate and clamp each record's moat_score to the 0-5 range."""
     for record in records:

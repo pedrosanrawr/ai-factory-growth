@@ -13,7 +13,6 @@ Goal: provide a controlled refresh process and expose evidence/status in the app
 6. Test dry-run, no-change refresh, proposed-change report, report serialization, and popup rendering for verified, fallback, and needs-review states.
 """
 
-
 def refresh_research() -> None:
     """Prepare the quarterly research refresh process."""
     # TODO(1): Add explicit input/output paths and a --dry-run command option.

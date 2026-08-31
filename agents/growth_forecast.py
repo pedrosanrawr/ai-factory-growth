@@ -15,7 +15,6 @@ Do not rank records or alter the risk-adjustment or TAFGS formulas.
 Done when the forecast is citation-backed, range-safe, and CSV compatible.
 """
 
-
 import math
 
 
@@ -26,7 +25,6 @@ def _to_float(value, default: float = 0.0) -> float:
         return parsed if math.isfinite(parsed) else default
     except (ValueError, TypeError):
         return default
-
 
 
 def run(records: list[dict]) -> list[dict]:

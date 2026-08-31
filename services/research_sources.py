@@ -14,7 +14,6 @@ Goal: replace manual research-only inputs with a provider-neutral, testable sour
 
 """
 
-
 def fetch_company_research(company: str) -> list[dict]:
     """Return normalized candidate research documents for one company."""
     # TODO(1): Choose an approved source provider and document its fields.

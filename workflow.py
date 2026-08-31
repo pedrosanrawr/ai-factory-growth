@@ -14,7 +14,6 @@ Goal: replace the hand-wired sequence with one observable workflow and an explic
 
 """
 
-
 def build_workflow():
     """Build and return the LangGraph workflow when implementation is complete."""
     # TODO(1): Define typed state for records, evidence, outputs, errors, and

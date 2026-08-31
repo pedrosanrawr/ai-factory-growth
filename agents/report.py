@@ -14,7 +14,6 @@ Done when users can see the evidence and whether analysis is verified,
 fallback-based, or needs review.
 """
 
-
 def run(records: list[dict],
         risk_discount_pct: float = 10.0,
         power_efficiency_weight: float = 1.2) -> tuple[list[dict], str]:
