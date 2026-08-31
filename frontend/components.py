@@ -1,7 +1,9 @@
 import base64
 import csv
+from html import escape
 from io import StringIO
 from pathlib import Path
+from urllib.parse import urlparse
 
 
 def build_export_csv(rows: list[dict]) -> bytes:
@@ -12,6 +14,8 @@ def build_export_csv(rows: list[dict]) -> bytes:
             "Rank",
             "Company",
             "Role",
+            "Segment Spend Weight",
+            "Revenue Exposure %",
             "Moat",
             "Margin %",
             "Growth %",
@@ -29,6 +33,8 @@ def build_export_csv(rows: list[dict]) -> bytes:
                 "Rank": index,
                 "Company": row["company"],
                 "Role": row["role"],
+                "Segment Spend Weight": row.get("segment_weight", 0.0),
+                "Revenue Exposure %": row.get("revenue_exposure_pct", 0.0),
                 "Moat": row["moat"],
                 "Margin %": row["margin_pct"],
                 "Growth %": row["growth_pct"],
@@ -123,7 +129,9 @@ def render_ranking_table(
     should_scroll = len(rows) > 8
     scroll_class = "table-scroll scroll-enabled" if should_scroll else "table-scroll"
     body = []
+    profile_modals = []
     for index, row in enumerate(rows, start=1):
+        company = str(row.get("company", ""))
         body.append(
             "<tr>"
             f'<td class="rank-cell">{index}</td>'
@@ -137,7 +145,25 @@ def render_ranking_table(
             f'<td class="status-cell center-cell">{status_badge(row["status"])}</td>'
             f'<td class="small-center">{row["margin_score"]}</td>'
             f'<td class="metric-tafgs">{row["tafgs"]}</td>'
+            '<td class="profile-action-cell">'
+            f'<a class="profile-view-link" href="#company-profile-{index - 1}" '
+            f'aria-label="View research profile for {escape(company, quote=True)}" title="View research profile">'
+            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 5c-5.2 0-9.4 4.3-10.5 7 1.1 2.7 5.3 7 10.5 7s9.4-4.3 10.5-7C21.4 9.3 17.2 5 12 5Zm0 11.5A4.5 4.5 0 1 1 12 7a4.5 4.5 0 0 1 0 9.5Zm0-2A2.5 2.5 0 1 0 12 9a2.5 2.5 0 0 0 0 5.5Z"/></svg>'
+            '<span>View</span></a></td>'
             "</tr>"
+        )
+        profile_modals.append(
+            f'<div id="company-profile-{index - 1}" class="profile-modal" role="dialog" aria-modal="true">'
+            '<div class="profile-modal-backdrop" aria-hidden="true"></div>'
+            '<div class="profile-modal-panel" role="document">'
+            '<div class="profile-modal-topbar">'
+            '<div><span class="profile-modal-kicker">Company Research Profile</span>'
+            '<span class="profile-modal-caption">Analysis, metrics, and source evidence</span></div>'
+            '<a class="profile-modal-close" href="#" aria-label="Close company research profile" title="Close profile">'
+            '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.7 5.3 12 12-1.4 1.4-12-12zM17.3 5.3l1.4 1.4-12 12-1.4-1.4z"/></svg></a>'
+            '</div>'
+            f'{render_company_profile(row, index)}</div>'
+            "</div>"
         )
 
     return (
@@ -150,11 +176,92 @@ def render_ranking_table(
         f'<div class="{scroll_class}">'
         '<table class="dashboard-table">'
         "<thead><tr>"
-        "<th>Rank</th><th>Company</th><th>Role</th><th>Moat</th><th>Margin %</th><th>Growth %</th><th>Eff. Score</th><th>Primary Risk</th><th>Status</th><th>Margin</th><th>TAFGS</th>"
+        "<th>Rank</th><th>Company</th><th>Role</th><th>Moat</th><th>Margin %</th><th>Growth %</th><th>Eff. Score</th><th>Primary Risk</th><th>Status</th><th>Margin</th><th>TAFGS</th><th>Profile</th>"
         "</tr></thead>"
         f"<tbody>{''.join(body)}</tbody></table></div>"
         '<div class="summary-bar">'
         '<span class="summary-icon">🛡</span>'
         f"<span><strong>Agent Summary:</strong> {agent_summary}</span>"
-        "</div></div>"
+        f"</div></div>{''.join(profile_modals)}"
+    )
+
+
+def render_capital_stack_overview(
+    rows: list[dict], segment_weights: dict[str, float]
+) -> str:
+    """Render the existing segment weights without changing the TAFGS formula."""
+    active_counts = {role: 0 for role in segment_weights}
+    for row in rows:
+        role = row.get("role", "")
+        if role in active_counts:
+            active_counts[role] += 1
+
+    segments = []
+    for role, weight in segment_weights.items():
+        segments.append(
+            '<div class="stack-segment">'
+            f'<div class="stack-segment-head"><span>{escape(role)}</span>'
+            f'<strong>{weight:.0%}</strong></div>'
+            f'<div class="stack-track"><div class="stack-fill" style="width:{weight * 100:.0f}%"></div></div>'
+            f'<div class="stack-segment-foot">{active_counts[role]} companies in current view</div>'
+            "</div>"
+        )
+
+    return (
+        '<div class="stack-card">'
+        '<div class="stack-title-row"><div>'
+        '<div class="section-card-title">AI Factory Capital Stack</div>'
+        '<div class="stack-subtitle">Reference share of AI Factory infrastructure spend</div>'
+        '</div><span class="stack-badge">Market Mapping Agent</span></div>'
+        f'<div class="stack-grid">{"".join(segments)}</div>'
+        '</div>'
+    )
+
+
+def _source_links_html(source_links: str) -> str:
+    """Turn pipe-separated safe URLs from the CSV into source links."""
+    links = []
+    for index, value in enumerate(str(source_links or "").split("|"), start=1):
+        url = value.strip()
+        parsed = urlparse(url)
+        if parsed.scheme in {"http", "https"} and parsed.netloc:
+            host = escape(parsed.netloc.removeprefix("www."))
+            safe_url = escape(url, quote=True)
+            links.append(
+                f'<a class="source-link" href="{safe_url}" target="_blank" '
+                f'rel="noopener noreferrer">Source {index} · {host}</a>'
+            )
+    return "".join(links) or '<span class="profile-empty">No source link provided.</span>'
+
+
+def render_company_profile(row: dict, rank: int) -> str:
+    """Render one detail view from the Report Agent's existing profile fields."""
+    company = escape(str(row.get("company", "Company")))
+    role = escape(str(row.get("role", "Unclassified")))
+    description = escape(str(row.get("short_description", "No description provided.")))
+    moat_notes = escape(str(row.get("moat_notes", "No moat narrative provided.")))
+    catalysts = escape(str(row.get("growth_catalysts", "No growth catalysts provided.")))
+    risks = escape(str(row.get("risk_notes", "No risk notes provided.")))
+    revenue_exposure = float(row.get("revenue_exposure_pct", 0.0) or 0.0)
+    segment_weight = float(row.get("segment_weight", 0.0) or 0.0)
+    tafgs = row.get("tafgs", 0.0)
+
+    return (
+        '<div class="company-profile">'
+        '<div class="profile-heading">'
+        f'<span class="profile-rank">#{rank}</span><div><div class="profile-company">{company}</div>'
+        f'<div class="profile-role">{role}</div></div></div>'
+        f'<p class="profile-description">{description}</p>'
+        '<div class="profile-metrics">'
+        f'<div><span>Revenue Exposure</span><strong>{revenue_exposure:.1f}%</strong></div>'
+        f'<div><span>Segment Weight</span><strong>{segment_weight:.0%}</strong></div>'
+        f'<div><span>TAFGS</span><strong>{tafgs}</strong></div>'
+        '</div>'
+        '<div class="profile-detail-grid">'
+        f'<div class="profile-detail moat-detail"><span>Moat &amp; Differentiation</span><p>{moat_notes}</p></div>'
+        f'<div class="profile-detail growth-detail"><span>AI Growth Catalysts</span><p>{catalysts}</p></div>'
+        f'<div class="profile-detail risk-detail"><span>Key Risks</span><p>{risks}</p></div>'
+        '<div class="profile-detail sources-detail"><span>Research Sources</span>'
+        f'<div class="source-links">{_source_links_html(row.get("source_links", ""))}</div></div>'
+        '</div></div>'
     )

@@ -11,6 +11,7 @@ from agents.report import run as generate_report
 from agents.risk_adjustment import run as adjust_risk
 from frontend.components import (
     build_export_csv,
+    render_capital_stack_overview,
     load_logo_html,
     render_ingestion_table,
     render_ranking_table,
@@ -101,11 +102,16 @@ def render_app() -> None:
 
     role_filter = render_role_filter_card()
 
+    st.markdown(
+        render_capital_stack_overview(ranked_rows, SEGMENT_WEIGHTS),
+        unsafe_allow_html=True,
+    )
     st.markdown(render_ingestion_table(ingestion_rows), unsafe_allow_html=True)
     st.markdown(
         render_ranking_table(ranked_rows, ranking_priority, agent_summary),
         unsafe_allow_html=True,
     )
+
 
 
 def render_risk_slider() -> int:

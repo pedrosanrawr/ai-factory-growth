@@ -121,6 +121,9 @@ def run(records: list[dict],
             {
                 "company": record.get("company", ""),
                 "role": record.get("role", ""),
+                "short_description": record.get("short_description", ""),
+                "revenue_exposure_pct": record.get("revenue_exposure_pct", 0.0),
+                "segment_weight": record.get("segment_weight", 0.0),
                 "moat": record.get("moat_score", 0),
                 "margin_pct": record.get("operating_margin_pct", 0.0),
                 "growth_pct": record.get("adjusted_growth_pct", 0.0),
@@ -132,6 +135,7 @@ def run(records: list[dict],
                 "moat_notes": record.get("moat_notes", ""),
                 "growth_catalysts": record.get("growth_catalysts", ""),
                 "risk_notes": record.get("risk_notes", ""),
+                "source_links": record.get("source_links", ""),
             }
         )
 
