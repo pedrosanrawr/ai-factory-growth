@@ -24,9 +24,8 @@ from google import genai
 
 DEFAULT_MODEL = "gemini-3.6-flash"
 REQUEST_TIMEOUT_SECONDS = 30
-
-# Gemini no longer makes 2.5 Flash available to newly created API projects.
-# Keep this mapping so an older local .env continues to work during the change.
+# Gemini 3.6 Flash is the project model. Keep this mapping so an older local
+# .env setting is upgraded to Gemini 3.6 Flash automatically.
 MODEL_ALIASES = {"gemini-2.5-flash": DEFAULT_MODEL}
 
 
