@@ -11,6 +11,8 @@ from typing import Any
 
 from dotenv import load_dotenv
 from google import genai
+from jsonschema import Draft202012Validator
+from jsonschema.exceptions import SchemaError, ValidationError
 
 
 DEFAULT_MODEL = "gemini-3.6-flash"
@@ -74,6 +76,12 @@ class LLMResult:
             error_type=error_type,
             error=error,
         )
+
+
+def _validate_json_against_schema(data: dict[str, Any], schema: dict[str, Any]) -> None:
+    """Validate a parsed model response against the caller's JSON Schema."""
+    Draft202012Validator.check_schema(schema)
+    Draft202012Validator(schema).validate(data)
 
 
 def _load_configuration() -> tuple[str, str]:
@@ -220,6 +228,14 @@ def ask_llm_json(
             return LLMResult.failure(
                 LLMErrorType.MALFORMED_RESPONSE,
                 "The LLM response must be a JSON object.",
+            )
+
+        try:
+            _validate_json_against_schema(data, schema)
+        except (SchemaError, ValidationError) as exc:
+            return LLMResult.failure(
+                LLMErrorType.MALFORMED_RESPONSE,
+                f"The LLM response does not match the JSON schema: {exc.message}.",
             )
 
         return LLMResult.success(data)

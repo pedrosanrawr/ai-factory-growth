@@ -209,6 +209,39 @@ class TestLLMClient(unittest.TestCase):
         self.assertIsNone(result.data)
 
     @patch("services.llm_client.get_llm_client")
+    def test_ask_llm_json_rejects_json_that_fails_the_schema(self, mock_get_client):
+        interaction = MagicMock()
+        interaction.output_text = json.dumps({"score": "five"})
+        mock_get_client.return_value.interactions.create.return_value = interaction
+
+        schema = {
+            "type": "object",
+            "properties": {
+                "score": {"type": "integer"},
+                "reason": {"type": "string"},
+            },
+            "required": ["score", "reason"],
+        }
+
+        with patch.dict(
+            "os.environ",
+            {"GEMINI_API_KEY": "test-key"},
+            clear=False,
+        ):
+            result = llm_client.ask_llm_json(
+                system_prompt="Analyze.",
+                user_prompt="Return JSON.",
+                schema=schema,
+            )
+
+        self.assertFalse(result.ok)
+        self.assertEqual(
+            result.error_type,
+            llm_client.LLMErrorType.MALFORMED_RESPONSE,
+        )
+        self.assertIsNone(result.data)
+
+    @patch("services.llm_client.get_llm_client")
     def test_ask_llm_json_handles_timeout(self, mock_get_client):
         mock_get_client.return_value.interactions.create.side_effect = (
             TimeoutError("request timed out")
