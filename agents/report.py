@@ -43,6 +43,14 @@ def run(records: list[dict],
                 "growth_catalysts": record.get("growth_catalysts", ""),
                 "risk_notes": record.get("risk_notes", ""),
                 "source_links": record.get("source_links", ""),
+                # Research refresh / evidence visibility (added by the
+                # controlled quarterly research refresh process). These are
+                # additive -- every key above is unchanged and in the same
+                # order, so existing frontend/export consumers keep working.
+                "research_as_of": record.get("research_as_of", ""),
+                "analysis_status": record.get("analysis_status", "unavailable"),
+                "analysis_confidence": record.get("analysis_confidence", None),
+                "evidence": record.get("evidence", []) or [],
             }
         )
 

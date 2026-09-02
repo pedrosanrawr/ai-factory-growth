@@ -68,5 +68,64 @@ class TestReport(unittest.TestCase):
         self.assertEqual(profiles[1]["primary_risk"], "Concentration")
 
 
+class TestReportEvidenceFields(unittest.TestCase):
+    """Research-refresh fields must be additive: every pre-existing key
+    stays present and unchanged, and the new keys pass through as-is."""
+
+    def test_default_record_gets_unavailable_evidence_fields(self) -> None:
+        record = make_record()
+        profiles, _ = run([record])
+
+        profile = profiles[0]
+        # Pre-existing keys untouched.
+        for key in (
+            "company", "role", "short_description", "revenue_exposure_pct",
+            "segment_weight", "moat", "margin_pct", "growth_pct", "eff_score",
+            "primary_risk", "status", "margin_score", "tafgs", "moat_notes",
+            "growth_catalysts", "risk_notes", "source_links",
+        ):
+            self.assertIn(key, profile)
+
+        # New keys default sensibly for a record that hasn't been researched.
+        self.assertEqual(profile["research_as_of"], "")
+        self.assertEqual(profile["analysis_status"], "unavailable")
+        self.assertIsNone(profile["analysis_confidence"])
+        self.assertEqual(profile["evidence"], [])
+
+    def test_verified_record_passes_through_evidence_and_confidence(self) -> None:
+        record = make_record()
+        evidence_item = {
+            "url": "https://www.sec.gov/Archives/edgar/data/1/a.htm",
+            "title": "Example Corp - 10-K",
+            "retrieved_date": "2026-09-01",
+            "status": "verified",
+        }
+        record.update(
+            {
+                "research_as_of": "2026-09-01",
+                "analysis_status": "verified",
+                "analysis_confidence": 0.92,
+                "evidence": [evidence_item],
+            }
+        )
+
+        profiles, _ = run([record])
+        profile = profiles[0]
+
+        self.assertEqual(profile["research_as_of"], "2026-09-01")
+        self.assertEqual(profile["analysis_status"], "verified")
+        self.assertEqual(profile["analysis_confidence"], 0.92)
+        self.assertEqual(profile["evidence"], [evidence_item])
+
+    def test_needs_review_status_passes_through_without_confidence(self) -> None:
+        record = make_record()
+        record.update({"analysis_status": "needs_review", "analysis_confidence": None})
+
+        profiles, _ = run([record])
+
+        self.assertEqual(profiles[0]["analysis_status"], "needs_review")
+        self.assertIsNone(profiles[0]["analysis_confidence"])
+
+
 if __name__ == "__main__":
     unittest.main()
