@@ -273,6 +273,100 @@ ai-factory-growth/
 
 ---
 
+## Quarterly Research Refresh Runbook
+
+Operator process for `scripts/refresh_research.py`, which keeps company
+research evidence current without ever silently overwriting
+`data/companies.csv` or the evidence store.
+
+### Quarterly steps
+
+1. **Stage** (safe, read-only against every canonical file):
+
+   ```bash
+   python -m scripts.refresh_research \
+     --input-csv data/companies.csv \
+     --evidence-store evidence_store.json
+   ```
+
+   This fetches candidate evidence per company and writes a dated,
+   reviewable JSON report under `data/refresh_reports/`. Nothing else on
+   disk is touched.
+
+2. **(Optional) Dry run** a specific company list or a fresh checkout
+   before staging for real, with `--dry-run` — prints the same summary
+   to the terminal but writes no files at all, not even the report.
+
+3. **Review** the staged report with a human analyst. For each company
+   with `new_evidence_count > 0`, open each candidate evidence item's
+   URL and confirm it actually supports its `claim` before doing
+   anything else.
+
+4. **Approve and write** only after review:
+
+   ```bash
+   python -m scripts.refresh_research \
+     --approve-write \
+     --from-report data/refresh_reports/research_refresh_<date>.json
+   ```
+
+   This is the only step that touches `data/companies.csv` or
+   `evidence_store.json`, and only after backing both up (see Backup /
+   rollback below).
+
+5. **Spot-check the dashboard**: run `streamlit run app.py`, open a
+   couple of the updated companies' profile popups, and confirm the new
+   evidence and status badge render as expected.
+
+### Review criteria
+
+* A candidate evidence item may be manually promoted from `needs_review`
+  to `verified` **only** after a human has actually opened the source
+  and confirmed it supports the stated claim. This script never marks
+  anything `verified` on its own.
+* Reject (do not approve) any candidate whose `claim` cannot be
+  confirmed against the linked source, whose URL 404s, or whose
+  `source_type` looks misclassified.
+* A company with `analysis_status: "unavailable"` in the report means
+  the refresh found nothing new to review — that is expected and is not
+  itself a failure to investigate.
+
+### Backup / rollback
+
+* Every `--approve-write` run copies the current `data/companies.csv`
+  and evidence-store file into `backups/` with a UTC timestamp suffix
+  (e.g. `backups/companies.csv.20260901T120000Z.bak`) **before** writing
+  anything.
+* To roll back, copy the relevant backup file back over the canonical
+  path it came from, e.g.:
+
+  ```bash
+  cp backups/companies.csv.20260901T120000Z.bak data/companies.csv
+  cp backups/evidence_store.json.20260901T120000Z.bak evidence_store.json
+  ```
+
+* Keep the staged report JSON from step 1 alongside the backups — it's
+  the record of exactly what was reviewed and approved that quarter.
+
+### Required tests
+
+Run before every quarterly refresh and before merging any change to
+this workflow:
+
+```bash
+python -m pytest scripts/__tests__/test_refresh_research.py
+python -m pytest agents/__tests__/test_report.py
+python -m pytest tests/test_research_profile_rendering.py
+python -m pytest services/__tests__/test_evidence_store.py
+```
+
+These cover: dry-run (no disk writes), a no-change refresh, a
+proposed-change report, report JSON serialization, the approved-write
+path (backup + CSV/evidence-store update), and popup rendering for the
+verified, needs_review, fallback, and unavailable states.
+
+---
+
 ## Goal
 
 Build a modular **AI Factory Growth analysis pipeline** where each agent is responsible for a specific part of the analysis while following a shared data structure and GitHub workflow.

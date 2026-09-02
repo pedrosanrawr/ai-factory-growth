@@ -218,6 +218,89 @@ def render_capital_stack_overview(
     )
 
 
+RESEARCH_STATUS_LABELS = {
+    "verified": "Verified",
+    "needs_review": "Needs Review",
+    "fallback": "Fallback (Unverified)",
+    "unavailable": "Research Unavailable",
+}
+RESEARCH_STATUS_CLASSES = {
+    "verified": "status-verified",
+    "needs_review": "status-needs-review",
+    "fallback": "status-fallback",
+    "unavailable": "status-unavailable",
+}
+
+
+def research_status_badge(analysis_status: str, analysis_confidence=None) -> str:
+    """Render the research-refresh status badge shown on a company profile.
+
+    Falls back to an understandable "Research Unavailable" label for any
+    status this design doesn't explicitly recognize, so the popup never
+    silently shows a blank or raw internal status string.
+    """
+    status_key = str(analysis_status or "").strip() or "unavailable"
+    label = RESEARCH_STATUS_LABELS.get(status_key, "Research Unavailable")
+    status_class = RESEARCH_STATUS_CLASSES.get(status_key, "status-unavailable")
+
+    confidence_html = ""
+    if status_key == "verified" and isinstance(analysis_confidence, (int, float)):
+        confidence_html = f'<span class="research-status-confidence">{analysis_confidence:.0%} confidence</span>'
+
+    return (
+        f'<span class="research-status-badge {status_class}">'
+        '<span class="status-dot"></span>'
+        f"{escape(label)}</span>{confidence_html}"
+    )
+
+
+def _evidence_items_html(evidence: list[dict]) -> str:
+    """Render candidate/confirmed evidence items from evidence_store.py.
+
+    Each item already carries its own per-source status (verified /
+    needs_review / unavailable), which may differ from the company-level
+    analysis_status, e.g. a company can be "needs_review" overall while
+    having one older "verified" item alongside new unverified ones.
+    """
+    if not evidence:
+        return (
+            '<span class="profile-empty">No evidence on file yet — this '
+            "company is pending its next research review.</span>"
+        )
+
+    items = []
+    for item in evidence:
+        if not isinstance(item, dict):
+            continue
+        url = str(item.get("url", "")).strip()
+        title = escape(str(item.get("title", "Untitled source")))
+        source_type = escape(str(item.get("source_type", "other")))
+        retrieved_date = escape(str(item.get("retrieved_date", "")))
+        item_status = str(item.get("status", "needs_review")).strip() or "needs_review"
+        status_class = RESEARCH_STATUS_CLASSES.get(item_status, "status-unavailable")
+        status_label = RESEARCH_STATUS_LABELS.get(item_status, "Research Unavailable")
+
+        parsed = urlparse(url)
+        link_html = title
+        if parsed.scheme in {"http", "https"} and parsed.netloc:
+            safe_url = escape(url, quote=True)
+            link_html = f'<a class="evidence-link" href="{safe_url}" target="_blank" rel="noopener noreferrer">{title}</a>'
+
+        items.append(
+            '<li class="evidence-item">'
+            f'<span class="evidence-item-title">{link_html}</span>'
+            '<span class="evidence-item-meta">'
+            f'<span class="evidence-source-type">{source_type}</span>'
+            f'<span class="evidence-retrieved">Retrieved {retrieved_date}</span>'
+            f'<span class="research-status-badge evidence-status {status_class}">'
+            '<span class="status-dot"></span>'
+            f"{escape(status_label)}</span>"
+            "</span></li>"
+        )
+
+    return f'<ul class="evidence-list">{"".join(items)}</ul>'
+
+
 def _source_links_html(source_links: str) -> str:
     """Turn pipe-separated safe URLs from the CSV into source links."""
     links = []
@@ -245,12 +328,19 @@ def render_company_profile(row: dict, rank: int) -> str:
     revenue_exposure = float(row.get("revenue_exposure_pct", 0.0) or 0.0)
     segment_weight = float(row.get("segment_weight", 0.0) or 0.0)
     tafgs = row.get("tafgs", 0.0)
+    analysis_status = row.get("analysis_status", "unavailable")
+    analysis_confidence = row.get("analysis_confidence")
+    research_as_of = escape(str(row.get("research_as_of", "")).strip() or "Not yet researched")
+    evidence = row.get("evidence") or []
 
     return (
         '<div class="company-profile">'
         '<div class="profile-heading">'
         f'<span class="profile-rank">#{rank}</span><div><div class="profile-company">{company}</div>'
-        f'<div class="profile-role">{role}</div></div></div>'
+        f'<div class="profile-role">{role}</div></div>'
+        f'<div class="profile-heading-status">{research_status_badge(analysis_status, analysis_confidence)}'
+        f'<span class="research-as-of">As of {research_as_of}</span></div>'
+        '</div>'
         f'<p class="profile-description">{description}</p>'
         '<div class="profile-metrics">'
         f'<div><span>Revenue Exposure</span><strong>{revenue_exposure:.1f}%</strong></div>'
@@ -263,5 +353,7 @@ def render_company_profile(row: dict, rank: int) -> str:
         f'<div class="profile-detail risk-detail"><span>Key Risks</span><p>{risks}</p></div>'
         '<div class="profile-detail sources-detail"><span>Research Sources</span>'
         f'<div class="source-links">{_source_links_html(row.get("source_links", ""))}</div></div>'
+        '<div class="profile-detail evidence-detail"><span>Evidence &amp; Refresh Status</span>'
+        f'{_evidence_items_html(evidence)}</div>'
         '</div></div>'
     )
