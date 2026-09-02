@@ -317,6 +317,11 @@ class TestValidEvidenceIds(unittest.TestCase):
         self.assertTrue(_valid_evidence_ids(record, ["e1"]))
         self.assertTrue(_valid_evidence_ids(record, ["e1", "e2"]))
 
+    def test_approved_evidence_store_urls_are_valid(self):
+        url = "https://www.sec.gov/Archives/example.htm"
+        record = make_record(evidence=[{"url": url, "claim": "Filing excerpt."}])
+        self.assertTrue(_valid_evidence_ids(record, [url]))
+
 
 # ---------------------------------------------------------------------------
 # enrich_risk_inputs() -- Gemini-based evidence-grounded enrichment.
@@ -329,7 +334,10 @@ class TestEnrichUnavailable(unittest.TestCase):
     @patch("agents.risk_adjustment.ask_llm_json")
     def test_unavailable_leaves_csv_risk_values_untouched(self, mock_ask, mock_configured):
         record = make_record(
-            concentration_risk=0.8, cyclicality_risk=0.3, execution_risk=0.3
+            concentration_risk=0.8,
+            cyclicality_risk=0.3,
+            execution_risk=0.3,
+            evidence=[{"id": "e1"}],
         )
         out = enrich_risk_inputs([record])[0]
 
@@ -351,7 +359,10 @@ class TestEnrichProviderFailure(unittest.TestCase):
             LLMErrorType.PROVIDER, "Gemini provider request failed."
         )
         record = make_record(
-            concentration_risk=0.8, cyclicality_risk=0.3, execution_risk=0.3
+            concentration_risk=0.8,
+            cyclicality_risk=0.3,
+            execution_risk=0.3,
+            evidence=[{"id": "e1"}],
         )
         out = enrich_risk_inputs([record])[0]
 
@@ -367,7 +378,7 @@ class TestEnrichProviderFailure(unittest.TestCase):
         mock_ask.return_value = LLMResult.failure(
             LLMErrorType.TIMEOUT, "Gemini request timed out."
         )
-        record = make_record()
+        record = make_record(evidence=[{"id": "e1"}])
         out = enrich_risk_inputs([record])[0]
         self.assertEqual(out["analysis_status"], "fallback")
 
@@ -377,7 +388,7 @@ class TestEnrichProviderFailure(unittest.TestCase):
         mock_ask.return_value = LLMResult.failure(
             LLMErrorType.MALFORMED_RESPONSE, "The LLM returned malformed JSON."
         )
-        record = make_record()
+        record = make_record(evidence=[{"id": "e1"}])
         out = enrich_risk_inputs([record])[0]
         self.assertEqual(out["analysis_status"], "fallback")
 
@@ -386,7 +397,7 @@ class TestEnrichProviderFailure(unittest.TestCase):
     def test_unexpected_exception_does_not_crash_pipeline(self, mock_ask, mock_configured):
         # Defensive: even if the shared client ever raised instead of
         # returning LLMResult, this agent must not propagate the crash.
-        record = make_record(concentration_risk=0.4)
+        record = make_record(concentration_risk=0.4, evidence=[{"id": "e1"}])
         out = enrich_risk_inputs([record])[0]
         self.assertEqual(out["analysis_status"], "fallback")
         self.assertEqual(out["concentration_risk"], 0.4)
@@ -579,7 +590,7 @@ class TestEnrichMultipleRecords(unittest.TestCase):
         mock_ask.side_effect = [success_result, failure_result]
 
         good_record = make_record(evidence=[{"id": "e1"}], concentration_risk=0.1)
-        bad_record = make_record(concentration_risk=0.2)
+        bad_record = make_record(concentration_risk=0.2, evidence=[{"id": "e1"}])
 
         out = enrich_risk_inputs([good_record, bad_record])
 

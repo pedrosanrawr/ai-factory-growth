@@ -4,15 +4,37 @@ This repository is the shared codebase for the group's **AI Factory Growth** pro
 
 ## Project Status
 
-The CSV-backed analysis pipeline is ready:
+The provider-backed analysis pipeline is ready:
 
 * **`schema.py`** — Contains the shared company record structure that all agents must follow.
 * **`app.py`** — Launches the Streamlit dashboard.
 * **`agents/`** — Contains the eight analysis modules that process company records in sequence.
 
 
-The agents are implemented and the dashboard now runs the real
-`data/companies.csv` pipeline. It no longer uses hard-coded frontend data.
+The dashboard loads its curated company universe from `data/companies.csv` and
+runs the LangGraph scoring pipeline immediately. This makes the standard
+Top-20 view repeatable and fast. The CSV is the approved Phase-1 company
+universe and scoring snapshot. When present, the local evidence store is read
+alongside it to display previously approved sources and research status; the
+dashboard never fetches external research at runtime.
+
+### Offline Research Refresh
+
+There is no dashboard research button. Run these commands manually or from a
+scheduled task outside Streamlit:
+
+```bash
+# Stage newly found SEC sources for review (no CSV or evidence-store writes).
+python -m scripts.refresh_research --dry-run
+
+# Build or update the cached Gemini analysis snapshot from local evidence.
+python -m scripts.refresh_analysis
+```
+
+`refresh_analysis` reuses cached Gemini responses when the company evidence is
+unchanged. The dashboard only reads `data/research_snapshots/latest.json`; it
+never waits for Gemini. A changed source invalidates that company's snapshot,
+so stale analysis is not applied.
 
 ---
 
@@ -266,6 +288,9 @@ ai-factory-growth/
 |-- .streamlit/
 |   `-- config.toml
 |-- app.py                     # Streamlit entry point
+|-- services/
+|   |-- research_sources.py     # Free SEC EDGAR discovery, filings, facts
+|   `-- research_enrichment.py # Candidate evidence collection/storage
 |-- schema.py                  # Shared record contract
 |-- requirements.txt
 `-- README.md
@@ -354,7 +379,7 @@ Run before every quarterly refresh and before merging any change to
 this workflow:
 
 ```bash
-python -m pytest scripts/__tests__/test_refresh_research.py
+python -m pytest scripts/test_refresh_research.py
 python -m pytest agents/__tests__/test_report.py
 python -m pytest tests/test_research_profile_rendering.py
 python -m pytest services/__tests__/test_evidence_store.py

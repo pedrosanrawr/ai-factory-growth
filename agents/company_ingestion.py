@@ -1,6 +1,12 @@
 import re
+import os
+from datetime import datetime, timezone
+from pathlib import Path
+
 import pandas as pd
 from schema import empty_record
+from services.evidence_store import EvidenceStore, migrate_legacy_record, record_analysis_status
+from services.research_snapshot import apply_snapshot, load_snapshot
 
 REQUIRED_COLUMNS = [
     "Company Name + Ticker",
@@ -13,6 +19,8 @@ REQUIRED_COLUMNS = [
     "Execution Risk",
     "Efficiency Score",
 ]
+
+DEFAULT_COMPANY_CSV = Path(__file__).resolve().parents[1] / "data" / "companies.csv"
 
 
 def _parse_pct(value) -> float:
@@ -54,7 +62,7 @@ def _to_str(value, default: str = "") -> str:
     return "" if val_str.lower() == "nan" else val_str
 
 
-def run(csv_path: str = "data/companies.csv") -> list[dict]:
+def _run_csv_fixture(csv_path: str, evidence_store: EvidenceStore | None = None) -> list[dict]:
     """
     Reads the company CSV, validates required columns, maps fields to schema,
     and returns a list of standardized company record dictionaries.
@@ -67,6 +75,13 @@ def run(csv_path: str = "data/companies.csv") -> list[dict]:
         raise ValueError(f"Missing required columns in CSV: {missing_cols}")
 
     records = []
+    snapshots = load_snapshot()
+    csv_snapshot_date = datetime.fromtimestamp(
+        Path(csv_path).stat().st_mtime, timezone.utc
+    ).date().isoformat()
+    evidence_store = evidence_store or EvidenceStore(
+        path=os.environ.get("EVIDENCE_STORE_PATH", "evidence_store.json")
+    )
 
     # 2. Iterate and map to schema
     for _, row in df.iterrows():
@@ -88,6 +103,23 @@ def run(csv_path: str = "data/companies.csv") -> list[dict]:
         record["risk_notes"] = _to_str(row.get("Risk Notes"))
         record["source_links"] = _to_str(row.get("Source Links"))
 
+        # Evidence is joined from the approved local store only. This keeps
+        # dashboard ingestion fast and avoids any live research request.
+        evidence = evidence_store.get(company)
+        if evidence:
+            record["evidence"] = evidence
+            record["analysis_status"] = record_analysis_status(evidence)
+            record["research_as_of"] = max(
+                (str(item.get("retrieved_date", "")) for item in evidence),
+                default="",
+            )
+        else:
+            # Existing CSV source links are usable as unverified evidence for
+            # offline analysis without fetching anything during dashboard load.
+            record = migrate_legacy_record(record, csv_snapshot_date)
+
+        apply_snapshot(record, snapshots)
+
         # Numeric / Percentage fields
         record["operating_margin_pct"] = _to_float(row.get("Operating Margin %"))
         record["revenue_exposure_pct"] = _parse_pct(row.get("Revenue Exposure %"))
@@ -101,3 +133,16 @@ def run(csv_path: str = "data/companies.csv") -> list[dict]:
         records.append(record)
 
     return records
+
+
+def run(
+    csv_path: str | Path | None = None,
+    *,
+    evidence_store: EvidenceStore | None = None,
+) -> list[dict]:
+    """Load the predefined company universe from the curated CSV file.
+
+    The CSV is the single ingestion input, so dashboard runs are immediate and
+    repeatable. Company-universe changes are made by updating the CSV.
+    """
+    return _run_csv_fixture(str(csv_path or DEFAULT_COMPANY_CSV), evidence_store)

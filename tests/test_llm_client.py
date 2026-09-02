@@ -52,6 +52,12 @@ class TestLLMClient(unittest.TestCase):
                 user_prompt="Hello",
             )
 
+    def test_gemini_36_omits_unsupported_temperature(self):
+        self.assertEqual(
+            llm_client._generation_config("gemini-3.6-flash", 0.2, 64),
+            {"max_output_tokens": 64},
+        )
+
     @patch("services.llm_client.get_llm_client")
     def test_ask_llm_returns_text_response(self, mock_get_client):
         interaction = MagicMock()

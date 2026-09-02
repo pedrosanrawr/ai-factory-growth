@@ -15,13 +15,12 @@ Do not rank records or alter the risk-adjustment or TAFGS formulas.
 Done when the forecast is citation-backed, range-safe, and CSV compatible.
 """
 
-import json
 import math
 from datetime import datetime, timezone
 from typing import Any
 
-from services.llm_client import ask_llm, is_llm_configured
-from services.evidence_store import store_evidence, record_analysis_status
+from services.llm_client import ask_llm_json, is_llm_configured
+from services.evidence_store import record_analysis_status
 
 FORECAST_MIN = -100.0
 FORECAST_MAX = 500.0
@@ -32,7 +31,7 @@ Given a company's profile and growth catalysts, estimate its 3-year
 AI-driven revenue CAGR (compound annual growth rate) as a percentage.
 
 Rules:
-- Base your estimate on the provided context and publicly known data.
+- Base your estimate only on the provided context and evidence.
 - The forecast must be between -100.0 and 500.0.
 - Provide a concise rationale (1-2 sentences).
 - Assign a confidence score between 0.0 and 1.0.
@@ -40,20 +39,34 @@ Rules:
 - Return ONLY valid JSON matching the supplied schema.
 """
 
+GROWTH_RESPONSE_SCHEMA: dict[str, Any] = {
+    "type": "object",
+    "properties": {
+        "forecast_pct": {"type": "number", "minimum": -100, "maximum": 500},
+        "rationale": {"type": "string", "minLength": 1},
+        "confidence": {"type": "number", "minimum": 0, "maximum": 1},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+    },
+    "required": ["forecast_pct", "rationale", "confidence", "evidence_ids"],
+    "additionalProperties": False,
+}
+
 _USER_PROMPT_TEMPLATE = """\
 Company: {company}
 AI Factory Role: {role}
 Description: {description}
 Growth Catalysts: {catalysts}
 CSV growth forecast (for reference): {csv_forecast}%
+Available evidence (only cite these URLs):
+{evidence}
 
-Provide your own independent 3-year AI-driven CAGR estimate.
+Provide an evidence-grounded 3-year AI-driven CAGR estimate.
 
 Return ONLY a valid JSON object with these fields:
 - forecast_pct: number (the 3-year CAGR percentage, between -100 and 500)
 - rationale: string (1-2 sentence justification)
 - confidence: number (0.0 to 1.0)
-- evidence_ids: array of strings (URLs or titles of sources used)
+- evidence_ids: non-empty array of URLs copied exactly from the evidence above
 """
 
 
@@ -92,28 +105,25 @@ def _validate_response(data: dict[str, Any]) -> tuple[float, str, float, list[st
     return (forecast, rationale, confidence, evidence_ids)
 
 
-def _to_evidence_items(evidence_ids: list[str], rationale: str, retrieved_date: str) -> list[dict]:
-    """Convert evidence_ids into evidence-store-compatible dicts."""
-    items = []
-    for eid in evidence_ids:
-        if not eid or not str(eid).strip():
-            continue
-        eid = str(eid).strip()
-        if eid.startswith(("http://", "https://")):
-            url = eid
-            title = f"Growth forecast source for {eid}"
-        else:
-            url = f"https://example.com/source/{eid.replace(' ', '-').lower()}"
-            title = eid
-        items.append({
-            "url": url,
-            "title": title,
-            "retrieved_date": retrieved_date,
-            "claim": rationale,
-            "source_type": "other",
-            "status": "needs_review",
-        })
-    return items
+def _validate_evidence_ids(evidence_ids: list[str], evidence: list[dict]) -> list[str] | None:
+    """Accept only non-empty citations that match stored evidence URLs."""
+    if not isinstance(evidence_ids, list) or not evidence_ids:
+        return None
+
+    known_urls = {
+        str(item.get("url", "")).strip().lower()
+        for item in evidence
+        if isinstance(item, dict) and item.get("url")
+    }
+    validated = []
+    for evidence_id in evidence_ids:
+        if not isinstance(evidence_id, str) or not evidence_id.strip():
+            return None
+        normalized = evidence_id.strip()
+        if normalized.lower() not in known_urls:
+            return None
+        validated.append(normalized)
+    return validated
 
 
 def _fallback(record: dict, csv_growth: float, now_iso: str) -> None:
@@ -133,7 +143,21 @@ def run(records: list[dict]) -> list[dict]:
         csv_growth = _clamp(_to_float(record.get("growth_forecast_pct", 0.0), 0.0),
                             FORECAST_MIN, FORECAST_MAX)
 
-        if not llm_available:
+        if record.get("_combined_llm_attempted"):
+            record["growth_forecast_pct"] = round(csv_growth, 4)
+            continue
+
+        evidence = record.get("evidence")
+        if not llm_available or not isinstance(evidence, list) or not evidence:
+            _fallback(record, csv_growth, now_iso)
+            continue
+
+        evidence_text = "\n".join(
+            f"- {item.get('url', '')}: {item.get('claim', item.get('excerpt', ''))}"
+            for item in evidence
+            if isinstance(item, dict) and item.get("url")
+        )
+        if not evidence_text:
             _fallback(record, csv_growth, now_iso)
             continue
 
@@ -143,48 +167,42 @@ def run(records: list[dict]) -> list[dict]:
             description=record.get("short_description", ""),
             catalysts=record.get("growth_catalysts", ""),
             csv_forecast=record.get("growth_forecast_pct", 0.0),
+            evidence=evidence_text,
         )
 
         try:
-            raw = ask_llm(
+            result = ask_llm_json(
                 system_prompt=_SYSTEM_PROMPT,
                 user_prompt=user_prompt,
+                schema=GROWTH_RESPONSE_SCHEMA,
                 temperature=0.2,
                 max_tokens=800,
             )
-            cleaned = raw.strip()
-            if cleaned.startswith("```"):
-                lines = cleaned.split("\n")
-                cleaned = "\n".join(lines[1:-1]) if len(lines) > 2 else cleaned
-            result_data = json.loads(cleaned)
         except Exception:
             _fallback(record, csv_growth, now_iso)
             continue
 
-        validated = _validate_response(result_data)
+        if not result.ok:
+            _fallback(record, csv_growth, now_iso)
+            continue
+
+        validated = _validate_response(result.data or {})
         if validated is None:
             _fallback(record, csv_growth, now_iso)
             continue
 
         llm_forecast, rationale, confidence, evidence_ids = validated
+        validated_ids = _validate_evidence_ids(evidence_ids, evidence)
+        if validated_ids is None:
+            _fallback(record, csv_growth, now_iso)
+            continue
         llm_forecast = _clamp(llm_forecast, FORECAST_MIN, FORECAST_MAX)
-
-        company = record.get("company", "")
-        if evidence_ids and company:
-            try:
-                store_evidence(company, _to_evidence_items(evidence_ids, rationale, now_iso))
-            except Exception:
-                pass
 
         record["growth_forecast_pct"] = round(llm_forecast, 4)
         record["analysis_confidence"] = round(confidence, 4)
         record["research_as_of"] = now_iso
-
-        try:
-            from services.evidence_store import _default_store
-            stored = _default_store.get(company) if company else []
-        except Exception:
-            stored = []
-        record["analysis_status"] = record_analysis_status(stored)
+        record["growth_rationale"] = rationale
+        record["growth_evidence_ids"] = validated_ids
+        record["analysis_status"] = record_analysis_status(evidence)
 
     return records
