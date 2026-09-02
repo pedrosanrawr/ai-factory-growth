@@ -1,16 +1,7 @@
 import streamlit as st
 import base64
 
-from agents.company_ingestion import run as ingest_companies
-from agents.growth_forecast import run as validate_growth
-from agents.margin_analysis import run as analyze_margin
-from agents.market_mapping import run as map_segments
-from agents.moat_analysis import run as analyze_moat
-from agents.ranking import run as rank_companies
-from agents.report import run as generate_report
-from agents.risk_adjustment import run as adjust_risk
 from frontend.components import (
-    build_export_csv,
     render_capital_stack_overview,
     load_logo_html,
     render_ingestion_table,
@@ -18,6 +9,8 @@ from frontend.components import (
 )
 from frontend.styles import APP_CSS
 from schema import SEGMENT_WEIGHTS
+from services.investor_report import build_investor_report_pdf
+from workflow import run_workflow
 
 
 ROLE_OPTIONS = list(SEGMENT_WEIGHTS)
@@ -33,18 +26,23 @@ def render_app() -> None:
     role_filter = st.session_state.get("role_filter", ROLE_OPTIONS[:])
 
     try:
-        ingestion_rows, ranked_rows, agent_summary = run_pipeline(
-            risk_discount=risk_discount,
-            power_weight=power_weight,
-            ranking_priority=ranking_priority,
-            role_filter=role_filter,
-        )
+        with st.spinner("Loading curated AI Factory rankings..."):
+            ingestion_rows, ranked_rows, agent_summary = run_pipeline(
+                risk_discount=risk_discount,
+                power_weight=power_weight,
+                ranking_priority=ranking_priority,
+                role_filter=role_filter,
+            )
     except (FileNotFoundError, ValueError) as error:
         st.error(f"Unable to load the company analysis pipeline: {error}")
         return
 
-    csv_data = build_export_csv(ranked_rows)
-    csv_base64 = base64.b64encode(csv_data).decode("utf-8")
+    pdf_data = build_investor_report_pdf(
+        ranked_rows,
+        ranking_priority=ranking_priority,
+        agent_summary=agent_summary,
+    )
+    pdf_base64 = base64.b64encode(pdf_data).decode("utf-8")
 
     st.markdown(
         f"""
@@ -59,8 +57,8 @@ def render_app() -> None:
                 </div>
                 <a
                     class="export-button"
-                    href="data:text/csv;base64,{csv_base64}"
-                    download="top_ai_factory_analysis_ui.csv"
+                    href="data:application/pdf;base64,{pdf_base64}"
+                    download="ai_factory_growth_investor_report.pdf"
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
@@ -78,7 +76,7 @@ def render_app() -> None:
                             d="M11.625 15.513q-.175-.063-.325-.213l-3.6-3.6q-.3-.3-.288-.7t.288-.7q.3-.3.713-.312t.712.287L11 12.15V5q0-.425.288-.712T12 4t.713.288T13 5v7.15l1.875-1.875q.3-.3.713-.288t.712.313q.275.3.288.7t-.288.7l-3.6 3.6q-.15.15-.325.213t-.375.062t-.375-.062M6 20q-.825 0-1.412-.587T4 18v-2q0-.425.288-.712T5 15t.713.288T6 16v2h12v-2q0-.425.288-.712T19 15t.713.288T20 16v2q0 .825-.587 1.413T18 20z"
                         />
                     </svg>
-                    <span>Export Report</span>
+                    <span>Export PDF</span>
                 </a>
             </div>
         </div>
@@ -209,30 +207,11 @@ def run_pipeline(
     ranking_priority: str,
     role_filter: list[str],
 ) -> tuple[list[dict], list[dict], str]:
-    """Run the real CSV-backed agent pipeline for the dashboard."""
-    records = ingest_companies()
-    records = map_segments(records)
-    records = analyze_moat(records)
-    records = analyze_margin(records)
-    records = validate_growth(records)
-    records = adjust_risk(records, risk_discount_pct=risk_discount)
-
-    if role_filter:
-        records = [record for record in records if record["role"] in role_filter]
-
-    ranked_records = rank_companies(
-        records,
+    """Run the LangGraph workflow used by the dashboard."""
+    state = run_workflow(
+        risk_discount=risk_discount,
+        power_weight=power_weight,
         ranking_priority=ranking_priority,
-        power_efficiency_weight=power_weight,
+        role_filter=role_filter,
     )
-    ingestion_rows, _ = generate_report(
-        records,
-        risk_discount_pct=risk_discount,
-        power_efficiency_weight=power_weight,
-    )
-    ranked_rows, agent_summary = generate_report(
-        ranked_records,
-        risk_discount_pct=risk_discount,
-        power_efficiency_weight=power_weight,
-    )
-    return ingestion_rows, ranked_rows, agent_summary
+    return state["ingestion_rows"], state["ranked_rows"], state["agent_summary"]

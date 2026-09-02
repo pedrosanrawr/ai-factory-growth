@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 
 from agents.company_ingestion import REQUIRED_COLUMNS, run
+from services.evidence_store import EvidenceStore, make_evidence_item
 
 
 class TestCompanyIngestion(unittest.TestCase):
@@ -71,6 +72,32 @@ class TestCompanyIngestion(unittest.TestCase):
 
             with self.assertRaisesRegex(ValueError, "Moat Score"):
                 run(str(csv_path))
+
+    def test_joins_approved_evidence_without_external_research(self) -> None:
+        rows = [{column: 0 for column in REQUIRED_COLUMNS}]
+        rows[0].update({
+            "Company Name + Ticker": "Example Corp (EXM)",
+            "Primary AI Factory Role": "Networking",
+        })
+        evidence = make_evidence_item(
+            url="https://example.com/filing",
+            title="Example filing",
+            retrieved_date="2026-09-02",
+            claim="Example evidence claim.",
+            source_type="other",
+        )
+
+        with tempfile.TemporaryDirectory() as directory:
+            csv_path = Path(directory) / "companies.csv"
+            store_path = Path(directory) / "evidence.json"
+            pd.DataFrame(rows).to_csv(csv_path, index=False)
+            store = EvidenceStore(str(store_path))
+            store.put("Example Corp (EXM)", [evidence])
+            records = run(csv_path, evidence_store=store)
+
+        self.assertEqual(records[0]["analysis_status"], "needs_review")
+        self.assertEqual(records[0]["research_as_of"], "2026-09-02")
+        self.assertEqual(records[0]["evidence"], [evidence])
 
 
 if __name__ == "__main__":

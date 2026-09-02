@@ -6,6 +6,8 @@ legacy source_links compatibility, per the work-file TODOs.
 picks these up directly.
 """
 import unittest
+import tempfile
+from pathlib import Path
 
 from schema import empty_record
 from services.evidence_store import (
@@ -16,6 +18,7 @@ from services.evidence_store import (
     migrate_legacy_source_links,
     new_company_record,
     record_analysis_status,
+    research_document_to_evidence,
     store_evidence,
 )
 
@@ -195,6 +198,36 @@ class LegacyCompatibilityTests(unittest.TestCase):
         self.assertEqual(record_analysis_status(verified), "verified")
 
         self.assertEqual(record_analysis_status([]), "unavailable")
+
+
+class ResearchDocumentCompatibilityTests(unittest.TestCase):
+    def test_converts_research_source_document_to_evidence_contract(self):
+        document = {
+            "title": "NVIDIA CORP - 10-K",
+            "url": "https://www.sec.gov/Archives/example.htm",
+            "source_type": "sec_filing",
+            "publication_date": "2026-02-15",
+            "retrieved_at": "2026-09-02T08:00:00+00:00",
+            "supporting_text": "Annual filing.",
+        }
+
+        item = research_document_to_evidence(
+            document,
+            claim="The company reported annual results.",
+        )
+
+        self.assertEqual(item["source_type"], "10-K")
+        self.assertEqual(item["published_date"], "2026-02-15")
+        self.assertEqual(item["retrieved_date"], "2026-09-02T08:00:00+00:00")
+        self.assertEqual(item["status"], "needs_review")
+
+    def test_corrupt_persisted_store_loads_as_empty(self):
+        with tempfile.TemporaryDirectory() as temp_dir:
+            path = Path(temp_dir) / "evidence.json"
+            path.write_text("not valid json", encoding="utf-8")
+            store = EvidenceStore(path=str(path))
+
+        self.assertEqual(store.get("Acme Corp"), [])
 
 
 if __name__ == "__main__":

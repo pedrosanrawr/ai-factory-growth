@@ -30,6 +30,7 @@ from services.research_sources import (
     EdgarFullTextSearchSource,
     ResearchSourceError,
     _build_filing_url,
+    _source_cik,
     _normalize_edgar_response,
     _read_cache,
     _validate_company,
@@ -168,12 +169,25 @@ class TestBuildFilingUrl(unittest.TestCase):
         url = _build_filing_url("0001045810-24-000123:nvda-8k.htm")
         self.assertEqual(
             url,
-            "https://www.sec.gov/Archives/edgar/data/1045810/0001045810-24-000123/nvda-8k.htm",
+            "https://www.sec.gov/Archives/edgar/data/1045810/000104581024000123/0001045810-24-000123-index.htm",
+        )
+
+    def test_uses_dash_free_accession_directory(self):
+        url = _build_filing_url("0001213900-25-117587:ea026831801ex99-1_andretti2.htm")
+        self.assertEqual(
+            url,
+            "https://www.sec.gov/Archives/edgar/data/1213900/000121390025117587/0001213900-25-117587-index.htm",
         )
 
     def test_returns_empty_string_for_malformed_id(self):
         self.assertEqual(_build_filing_url("no-colon-here"), "")
         self.assertEqual(_build_filing_url(""), "")
+
+    def test_prefers_the_actual_filer_cik_over_accession_prefix(self):
+        self.assertEqual(
+            _source_cik({"ciks": ["0000926282"]}, "0001193125-26-204995:exhibit.htm"),
+            "0000926282",
+        )
 
 
 # ---------------------------------------------------------------------------
@@ -201,6 +215,7 @@ class TestUserAgentResolution(unittest.TestCase):
     def test_raises_clear_error_when_neither_is_set(self):
         with (
             patch.dict(os.environ, {}, clear=True),
+            patch("services.research_sources.load_dotenv"),
             self.assertRaises(ResearchSourceError) as ctx,
         ):
             EdgarFullTextSearchSource()
@@ -214,6 +229,7 @@ class TestUserAgentResolution(unittest.TestCase):
         # transient network failure is, that would hide a setup mistake.
         with (
             patch.dict(os.environ, {}, clear=True),
+            patch("services.research_sources.load_dotenv"),
             self.assertRaises(ResearchSourceError),
         ):
             fetch_company_research("NVIDIA", use_cache=False)
@@ -404,6 +420,24 @@ class TestCache(unittest.TestCase):
         path.write_text(json.dumps(payload))
 
         self.assertIsNone(_read_cache("Old Co"))
+
+    def test_read_ignores_cache_with_naive_timestamp_or_bad_documents(self):
+        path = research_sources._cache_path("Broken Co")
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_text(
+            json.dumps({"cached_at": "2026-09-02T08:00:00", "documents": []})
+        )
+        self.assertIsNone(_read_cache("Broken Co"))
+
+        path.write_text(
+            json.dumps(
+                {
+                    "cached_at": datetime.now(timezone.utc).isoformat(),
+                    "documents": {"not": "a list"},
+                }
+            )
+        )
+        self.assertIsNone(_read_cache("Broken Co"))
 
     @patch("services.research_sources.urllib.request.urlopen")
     def test_fetch_company_research_uses_cache_on_second_call(self, mock_urlopen):

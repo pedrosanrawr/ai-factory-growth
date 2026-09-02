@@ -162,7 +162,7 @@ def render_ranking_table(
             '<a class="profile-modal-close" href="#" aria-label="Close company research profile" title="Close profile">'
             '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.7 5.3 12 12-1.4 1.4-12-12zM17.3 5.3l1.4 1.4-12 12-1.4-1.4z"/></svg></a>'
             '</div>'
-            f'{render_company_profile(row, index)}</div>'
+            f'<div class="profile-modal-body">{render_company_profile(row, index)}</div></div>'
             "</div>"
         )
 
@@ -220,7 +220,7 @@ def render_capital_stack_overview(
 
 RESEARCH_STATUS_LABELS = {
     "verified": "Verified",
-    "needs_review": "Needs Review",
+    "needs_review": "New Source",
     "fallback": "Fallback (Unverified)",
     "unavailable": "Research Unavailable",
 }
@@ -274,8 +274,6 @@ def _evidence_items_html(evidence: list[dict]) -> str:
             continue
         url = str(item.get("url", "")).strip()
         title = escape(str(item.get("title", "Untitled source")))
-        source_type = escape(str(item.get("source_type", "other")))
-        retrieved_date = escape(str(item.get("retrieved_date", "")))
         item_status = str(item.get("status", "needs_review")).strip() or "needs_review"
         status_class = RESEARCH_STATUS_CLASSES.get(item_status, "status-unavailable")
         status_label = RESEARCH_STATUS_LABELS.get(item_status, "Research Unavailable")
@@ -284,18 +282,17 @@ def _evidence_items_html(evidence: list[dict]) -> str:
         link_html = title
         if parsed.scheme in {"http", "https"} and parsed.netloc:
             safe_url = escape(url, quote=True)
-            link_html = f'<a class="evidence-link" href="{safe_url}" target="_blank" rel="noopener noreferrer">{title}</a>'
+            link_html = f'<a class="evidence-pill" href="{safe_url}" target="_blank" rel="noopener noreferrer">{title}'
+            link_html += f'<span class="evidence-pill-status {status_class}">{escape(status_label)}</span></a>'
+
+        if link_html == title:
+            link_html = (
+                f'<span class="evidence-pill">{title}'
+                f'<span class="evidence-pill-status {status_class}">{escape(status_label)}</span></span>'
+            )
 
         items.append(
-            '<li class="evidence-item">'
-            f'<span class="evidence-item-title">{link_html}</span>'
-            '<span class="evidence-item-meta">'
-            f'<span class="evidence-source-type">{source_type}</span>'
-            f'<span class="evidence-retrieved">Retrieved {retrieved_date}</span>'
-            f'<span class="research-status-badge evidence-status {status_class}">'
-            '<span class="status-dot"></span>'
-            f"{escape(status_label)}</span>"
-            "</span></li>"
+            f'<li class="evidence-item">{link_html}</li>'
         )
 
     return f'<ul class="evidence-list">{"".join(items)}</ul>'
@@ -330,8 +327,14 @@ def render_company_profile(row: dict, rank: int) -> str:
     tafgs = row.get("tafgs", 0.0)
     analysis_status = row.get("analysis_status", "unavailable")
     analysis_confidence = row.get("analysis_confidence")
-    research_as_of = escape(str(row.get("research_as_of", "")).strip() or "Not yet researched")
+    research_as_of = escape(
+        str(row.get("research_as_of", "")).strip() or "Baseline data"
+    )
     evidence = row.get("evidence") or []
+    source_links = (
+        '<div class="profile-detail sources-detail"><span>Source Links</span>'
+        f'<div class="source-links">{_source_links_html(row.get("source_links", ""))}</div></div>'
+    )
 
     return (
         '<div class="company-profile">'
@@ -339,7 +342,7 @@ def render_company_profile(row: dict, rank: int) -> str:
         f'<span class="profile-rank">#{rank}</span><div><div class="profile-company">{company}</div>'
         f'<div class="profile-role">{role}</div></div>'
         f'<div class="profile-heading-status">{research_status_badge(analysis_status, analysis_confidence)}'
-        f'<span class="research-as-of">As of {research_as_of}</span></div>'
+        f'<span class="research-as-of">Research snapshot: {research_as_of}</span></div>'
         '</div>'
         f'<p class="profile-description">{description}</p>'
         '<div class="profile-metrics">'
@@ -351,9 +354,8 @@ def render_company_profile(row: dict, rank: int) -> str:
         f'<div class="profile-detail moat-detail"><span>Moat &amp; Differentiation</span><p>{moat_notes}</p></div>'
         f'<div class="profile-detail growth-detail"><span>AI Growth Catalysts</span><p>{catalysts}</p></div>'
         f'<div class="profile-detail risk-detail"><span>Key Risks</span><p>{risks}</p></div>'
-        '<div class="profile-detail sources-detail"><span>Research Sources</span>'
-        f'<div class="source-links">{_source_links_html(row.get("source_links", ""))}</div></div>'
-        '<div class="profile-detail evidence-detail"><span>Evidence &amp; Refresh Status</span>'
+        f'{source_links}'
+        '<div class="profile-detail evidence-detail"><span>Research Evidence</span>'
         f'{_evidence_items_html(evidence)}</div>'
         '</div></div>'
     )

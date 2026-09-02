@@ -52,7 +52,7 @@ class ResearchStatusBadgeTests(unittest.TestCase):
 
     def test_needs_review_badge(self):
         html = research_status_badge("needs_review")
-        self.assertIn("Needs Review", html)
+        self.assertIn("New Source", html)
         self.assertIn("status-needs-review", html)
 
     def test_fallback_badge(self):
@@ -78,14 +78,14 @@ class CompanyProfilePopupTests(unittest.TestCase):
         self.assertIn("status-verified", html)
         self.assertIn("Verified", html)
         self.assertIn("Acme Corp - 10-K", html)
-        self.assertIn("evidence-link", html)
-        self.assertIn("Evidence &amp; Refresh Status", html)
+        self.assertIn("evidence-pill", html)
+        self.assertIn("Research Evidence", html)
 
     def test_needs_review_state_renders_review_badge(self):
         row = _base_row(analysis_status="needs_review", evidence=[_evidence_item("needs_review")])
         html = render_company_profile(row, 1)
 
-        self.assertIn("Needs Review", html)
+        self.assertIn("New Source", html)
         self.assertIn("status-needs-review", html)
 
     def test_fallback_state_renders_fallback_label(self):
@@ -102,10 +102,10 @@ class CompanyProfilePopupTests(unittest.TestCase):
         self.assertIn("Research Unavailable", html)
         self.assertIn("pending its next research review", html)
 
-    def test_missing_research_as_of_shows_understandable_placeholder(self):
+    def test_missing_research_as_of_shows_snapshot_placeholder(self):
         row = _base_row(research_as_of="")
         html = render_company_profile(row, 1)
-        self.assertIn("Not yet researched", html)
+        self.assertIn("Baseline data", html)
 
     def test_evidence_items_are_html_escaped(self):
         malicious = _evidence_item("needs_review")
@@ -126,6 +126,14 @@ class CompanyProfilePopupTests(unittest.TestCase):
         self.assertIn("Backlog growth.", html)
         self.assertIn("Customer concentration.", html)
         self.assertIn("example.com", html)
+
+    def test_shows_source_links_and_compact_evidence_when_evidence_exists(self):
+        row = _base_row(evidence=[_evidence_item("needs_review")])
+        html = render_company_profile(row, 1)
+
+        self.assertIn("Research Evidence", html)
+        self.assertIn("Source Links</span>", html)
+        self.assertIn("evidence-pill", html)
 
 
 if __name__ == "__main__":

@@ -136,8 +136,16 @@ class EvidenceStore:
         self.path = path
         self._data: dict[str, list[dict]] = {}
         if path != ":memory:" and os.path.exists(path):
-            with open(path, "r", encoding="utf-8") as f:
-                self._data = json.load(f)
+            try:
+                with open(path, "r", encoding="utf-8") as f:
+                    loaded = json.load(f)
+                if isinstance(loaded, dict) and all(
+                    isinstance(items, list) for items in loaded.values()
+                ):
+                    self._data = loaded
+            except (OSError, json.JSONDecodeError):
+                # A corrupt optional local store must not stop the application.
+                self._data = {}
  
     def _persist(self) -> None:
         if self.path == ":memory:":
@@ -206,6 +214,43 @@ def store_evidence(
         validated.append(make_evidence_item(**raw))
  
     return store.put(company, validated)
+
+
+def research_document_to_evidence(
+    document: dict,
+    *,
+    claim: str,
+    status: str = "needs_review",
+) -> dict:
+    """Convert one normalized research document into the evidence contract.
+
+    Research adapters return provider-neutral ``publication_date`` and
+    ``retrieved_at`` fields. The evidence contract uses ``published_date`` and
+    ``retrieved_date`` and requires a human/agent claim, so the conversion is
+    explicit rather than silently marking a document as verified evidence.
+    """
+    if not isinstance(document, dict):
+        raise EvidenceValidationError("research document must be a dictionary")
+
+    source_type = str(document.get("source_type", "")).strip()
+    if source_type == "sec_filing":
+        title = str(document.get("title", ""))
+        source_type = next(
+            (form for form in ("10-K", "10-Q", "8-K") if form in title),
+            "other",
+        )
+
+    retrieved_at = str(document.get("retrieved_at", "")).strip()
+    return make_evidence_item(
+        url=str(document.get("url", "")),
+        title=str(document.get("title", "")),
+        retrieved_date=retrieved_at,
+        published_date=str(document.get("publication_date", "")),
+        excerpt=str(document.get("supporting_text", "")),
+        claim=claim,
+        source_type=source_type or "other",
+        status=status,
+    )
  
  
 def new_company_record(company: str) -> dict:

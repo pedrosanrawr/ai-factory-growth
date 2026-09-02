@@ -23,6 +23,9 @@ MODEL_ALIASES = {
     "gemini-2.5-flash": DEFAULT_MODEL,
 }
 
+MODELS_WITHOUT_SAMPLING_PARAMETERS = {"gemini-3.6-flash"}
+
+
 
 class LLMConfigurationError(RuntimeError):
     """Raised when the local Gemini credentials are not configured."""
@@ -126,6 +129,14 @@ def _validate_common_input(
         raise ValueError("user_prompt must be a non-empty string.")
 
 
+def _generation_config(model: str, temperature: float, max_tokens: int) -> dict[str, int | float]:
+    """Avoid unsupported sampling parameters for current Gemini 3 models."""
+    config: dict[str, int | float] = {"max_output_tokens": max(1, int(max_tokens))}
+    if model not in MODELS_WITHOUT_SAMPLING_PARAMETERS:
+        config["temperature"] = max(0.01, min(2.0, float(temperature)))
+    return config
+
+
 def ask_llm(
     system_prompt: str,
     user_prompt: str,
@@ -145,10 +156,7 @@ def ask_llm(
             model=model or configured_model,
             system_instruction=system_prompt,
             input=user_prompt,
-            generation_config={
-                "temperature": max(0.01, min(2.0, float(temperature))),
-                "max_output_tokens": max(1, int(max_tokens)),
-            },
+            generation_config=_generation_config(model or configured_model, temperature, max_tokens),
             timeout=REQUEST_TIMEOUT_SECONDS,
         )
     except TimeoutError as exc:
@@ -201,10 +209,7 @@ def ask_llm_json(
                 "mime_type": "application/json",
                 "schema": schema,
             },
-            generation_config={
-                "temperature": max(0.01, min(2.0, float(temperature))),
-                "max_output_tokens": max(1, int(max_tokens)),
-            },
+            generation_config=_generation_config(model or configured_model, temperature, max_tokens),
             timeout=REQUEST_TIMEOUT_SECONDS,
         )
 
@@ -258,8 +263,8 @@ def ask_llm_json(
             str(exc),
         )
 
-    except Exception:
+    except Exception as exc:
         return LLMResult.failure(
             LLMErrorType.PROVIDER,
-            "Gemini provider request failed.",
+            f"Gemini provider request failed: {str(exc)[:500]}",
         )

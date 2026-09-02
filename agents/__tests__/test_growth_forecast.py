@@ -1,14 +1,14 @@
 """Tests for agents/growth_forecast.py (Sprint 5 — LLM integration)."""
 
 import unittest
-from unittest.mock import patch, MagicMock
+from unittest.mock import patch
 
-from services.llm_client import LLMResult, LLMErrorType
+from services.llm_client import LLMResult
 from agents.growth_forecast import (
     _to_float,
     _clamp,
     _validate_response,
-    _to_evidence_items,
+    _validate_evidence_ids,
     run,
     FORECAST_MIN,
     FORECAST_MAX,
@@ -104,21 +104,15 @@ class TestValidateResponse(unittest.TestCase):
         self.assertEqual(result[3], [])
 
 
-class TestToEvidenceItems(unittest.TestCase):
-    def test_url_evidence(self) -> None:
-        items = _to_evidence_items(["https://sec.gov/filing"], "Test rationale", "2026-09-01")
-        self.assertEqual(len(items), 1)
-        self.assertEqual(items[0]["url"], "https://sec.gov/filing")
-        self.assertEqual(items[0]["status"], "needs_review")
-
-    def test_title_evidence(self) -> None:
-        items = _to_evidence_items(["SEC 10-K Filing"], "Test", "2026-09-01")
-        self.assertEqual(len(items), 1)
-        self.assertEqual(items[0]["title"], "SEC 10-K Filing")
-
-    def test_empty_ids_produces_nothing(self) -> None:
-        items = _to_evidence_items([], "Test", "2026-09-01")
-        self.assertEqual(items, [])
+class TestEvidenceCitationValidation(unittest.TestCase):
+    def test_accepts_only_urls_already_stored_on_the_record(self) -> None:
+        evidence = [{"url": "https://sec.gov/filing"}]
+        self.assertEqual(
+            _validate_evidence_ids(["https://sec.gov/filing"], evidence),
+            ["https://sec.gov/filing"],
+        )
+        self.assertIsNone(_validate_evidence_ids(["https://example.com"], evidence))
+        self.assertIsNone(_validate_evidence_ids([], evidence))
 
 
 # ---------------------------------------------------------------------------
@@ -196,6 +190,54 @@ class TestRunMultipleRecords(unittest.TestCase):
         result = run(records)
         for record in result:
             self.assertEqual(record["analysis_status"], "fallback")
+
+
+class TestEvidenceGroundedLlmRun(unittest.TestCase):
+    @patch("agents.growth_forecast.is_llm_configured", return_value=True)
+    @patch("agents.growth_forecast.ask_llm_json")
+    def test_uses_only_existing_evidence_citations(self, mock_ask, _mock_configured):
+        url = "https://sec.gov/filing"
+        mock_ask.return_value = LLMResult.success(
+            {
+                "forecast_pct": 55.0,
+                "rationale": "Demand is supported by the filing.",
+                "confidence": 0.8,
+                "evidence_ids": [url],
+            }
+        )
+        record = {
+            "company": "NVIDIA",
+            "growth_forecast_pct": 45.0,
+            "evidence": [{"url": url, "claim": "Data-center revenue grew."}],
+        }
+
+        result = run([record])[0]
+
+        self.assertEqual(result["growth_forecast_pct"], 55.0)
+        self.assertEqual(result["growth_evidence_ids"], [url])
+        self.assertEqual(result["analysis_status"], "needs_review")
+
+    @patch("agents.growth_forecast.is_llm_configured", return_value=True)
+    @patch("agents.growth_forecast.ask_llm_json")
+    def test_rejects_model_citations_not_in_stored_evidence(self, mock_ask, _mock_configured):
+        mock_ask.return_value = LLMResult.success(
+            {
+                "forecast_pct": 55.0,
+                "rationale": "Unsupported claim.",
+                "confidence": 0.8,
+                "evidence_ids": ["https://invented.example/source"],
+            }
+        )
+        record = {
+            "company": "NVIDIA",
+            "growth_forecast_pct": 45.0,
+            "evidence": [{"url": "https://sec.gov/filing"}],
+        }
+
+        result = run([record])[0]
+
+        self.assertEqual(result["growth_forecast_pct"], 45.0)
+        self.assertEqual(result["analysis_status"], "fallback")
 
 
 if __name__ == "__main__":

@@ -233,6 +233,9 @@ def run(records: list[dict]) -> list[dict]:
     llm_available = is_llm_configured()
 
     for record in records:
+        if record.get("_combined_llm_attempted"):
+            record["moat_score"] = _clamp_score(record.get("moat_score", 0))
+            continue
         if llm_available and record.get("evidence"):
             try:
                 _analyze_single_record(record)
