@@ -1,5 +1,6 @@
 import base64
 import csv
+import re
 from html import escape
 from io import StringIO
 from pathlib import Path
@@ -301,7 +302,8 @@ def _evidence_items_html(evidence: list[dict]) -> str:
 def _source_links_html(source_links: str) -> str:
     """Turn pipe-separated safe URLs from the CSV into source links."""
     links = []
-    for index, value in enumerate(str(source_links or "").split("|"), start=1):
+    normalized_links = re.sub(r"(?<!:)//(?=www\.)", "|https://", str(source_links or ""))
+    for index, value in enumerate(normalized_links.split("|"), start=1):
         url = value.strip()
         parsed = urlparse(url)
         if parsed.scheme in {"http", "https"} and parsed.netloc:
@@ -314,14 +316,32 @@ def _source_links_html(source_links: str) -> str:
     return "".join(links) or '<span class="profile-empty">No source link provided.</span>'
 
 
+def _display_narrative(analysis: object, baseline: object) -> str:
+    """Keep citations in the evidence contract, not inside investor-facing prose."""
+    narrative = str(analysis or baseline or "No analysis provided.")
+    narrative = re.sub(
+        r"\bAs cited in\s+https?://[^\s,]+\s+and\s+https?://[^\s,]+,\s*its\b",
+        "Its",
+        narrative,
+        flags=re.IGNORECASE,
+    )
+    narrative = re.sub(r"\s*\(\s*(?:source:\s*)?https?://[^)]*\)", "", narrative, flags=re.IGNORECASE)
+    narrative = re.sub(r"https?://[^\s,)]*", "", narrative)
+    narrative = re.sub(r"\bAs cited in(?:\s+and)?\s*,?\s*", "", narrative, flags=re.IGNORECASE)
+    narrative = re.sub(r"\.\s+its\b", ". Its", narrative)
+    narrative = re.sub(r"\s+([,.;:])", r"\1", narrative)
+    narrative = re.sub(r"\s{2,}", " ", narrative).strip()
+    return escape(narrative)
+
+
 def render_company_profile(row: dict, rank: int) -> str:
     """Render one detail view from the Report Agent's existing profile fields."""
     company = escape(str(row.get("company", "Company")))
     role = escape(str(row.get("role", "Unclassified")))
     description = escape(str(row.get("short_description", "No description provided.")))
-    moat_notes = escape(str(row.get("moat_notes", "No moat narrative provided.")))
-    catalysts = escape(str(row.get("growth_catalysts", "No growth catalysts provided.")))
-    risks = escape(str(row.get("risk_notes", "No risk notes provided.")))
+    moat_notes = _display_narrative(row.get("moat_rationale"), row.get("moat_notes", "No moat narrative provided."))
+    catalysts = _display_narrative(row.get("growth_rationale"), row.get("growth_catalysts", "No growth catalysts provided."))
+    risks = _display_narrative(row.get("risk_rationale"), row.get("risk_notes", "No risk notes provided."))
     revenue_exposure = float(row.get("revenue_exposure_pct", 0.0) or 0.0)
     segment_weight = float(row.get("segment_weight", 0.0) or 0.0)
     tafgs = row.get("tafgs", 0.0)
@@ -335,13 +355,18 @@ def render_company_profile(row: dict, rank: int) -> str:
         '<div class="profile-detail sources-detail"><span>Source Links</span>'
         f'<div class="source-links">{_source_links_html(row.get("source_links", ""))}</div></div>'
     )
+    llm_badge = (
+        '<span class="llm-analysis-badge">AI Enriched</span>'
+        if row.get("_cached_llm_analysis")
+        else ""
+    )
 
     return (
         '<div class="company-profile">'
         '<div class="profile-heading">'
         f'<span class="profile-rank">#{rank}</span><div><div class="profile-company">{company}</div>'
         f'<div class="profile-role">{role}</div></div>'
-        f'<div class="profile-heading-status">{research_status_badge(analysis_status, analysis_confidence)}'
+        f'<div class="profile-heading-status">{llm_badge}{research_status_badge(analysis_status, analysis_confidence)}'
         f'<span class="research-as-of">Research snapshot: {research_as_of}</span></div>'
         '</div>'
         f'<p class="profile-description">{description}</p>'

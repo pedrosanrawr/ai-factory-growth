@@ -127,6 +127,44 @@ class CompanyProfilePopupTests(unittest.TestCase):
         self.assertIn("Customer concentration.", html)
         self.assertIn("example.com", html)
 
+    def test_cached_analysis_rationales_replace_csv_narratives(self):
+        row = _base_row(
+            moat_rationale="Cached moat rationale.",
+            growth_rationale="Cached growth rationale.",
+            risk_rationale="Cached risk rationale.",
+        )
+        html = render_company_profile(row, 1)
+
+        self.assertIn("Cached moat rationale.", html)
+        self.assertIn("Cached growth rationale.", html)
+        self.assertIn("Cached risk rationale.", html)
+        self.assertNotIn("Strong moat.", html)
+
+    def test_cached_analysis_hides_inline_citation_urls(self):
+        row = _base_row(
+            moat_rationale="As cited in https://example.com/a and https://example.com/b, its moat is durable.",
+            growth_rationale="Growth is supported (Source: https://example.com/c).",
+        )
+        html = render_company_profile(row, 1)
+
+        self.assertIn("Its moat is durable.", html)
+        self.assertIn("Growth is supported.", html)
+        self.assertNotIn("https://example.com/a", html)
+        self.assertNotIn("https://example.com/c", html)
+
+    def test_splits_accidentally_joined_source_urls(self):
+        row = _base_row(source_links="https://www.sec.gov/filing.htm//www.fool.com/article")
+        html = render_company_profile(row, 1)
+
+        self.assertIn("sec.gov", html)
+        self.assertIn("fool.com", html)
+
+    def test_cached_gemini_analysis_shows_a_profile_badge(self):
+        html = render_company_profile(_base_row(_cached_llm_analysis=True), 1)
+
+        self.assertIn("AI Enriched", html)
+        self.assertIn("llm-analysis-badge", html)
+
     def test_shows_source_links_and_compact_evidence_when_evidence_exists(self):
         row = _base_row(evidence=[_evidence_item("needs_review")])
         html = render_company_profile(row, 1)

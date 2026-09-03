@@ -138,6 +138,16 @@ def _companies_from_csv(path: str | Path) -> list[str]:
         return [str(row.get("Company Name + Ticker", "")).strip() for row in csv.DictReader(file) if str(row.get("Company Name + Ticker", "")).strip()]
 
 
+def _select_batch(companies: list[str], batch_size: int, batch_number: int) -> list[str]:
+    """Return one 1-indexed batch without changing the canonical CSV order."""
+    if batch_size < 1:
+        raise ValueError("--batch-size must be at least 1")
+    if batch_number < 1:
+        raise ValueError("--batch-number must be at least 1")
+    start = (batch_number - 1) * batch_size
+    return companies[start:start + batch_size]
+
+
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--input-csv", default="data/companies.csv")
@@ -147,6 +157,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--approve-write", action="store_true")
     parser.add_argument("--from-report")
     parser.add_argument("--backup-dir", default="backups")
+    parser.add_argument("--batch-size", type=int, default=5, help="Companies to stage per run (default: 5).")
+    parser.add_argument("--batch-number", type=int, default=1, help="1-indexed company batch to stage (default: 1).")
     args = parser.parse_args(argv)
     if args.approve_write:
         if not args.from_report:
@@ -154,7 +166,17 @@ def main(argv: list[str] | None = None) -> int:
         report = json.loads(Path(args.from_report).read_text(encoding="utf-8"))
         apply_approved_write(report, input_csv=args.input_csv, evidence_store_path=args.evidence_store, backup_dir=args.backup_dir)
         return 0
-    report = build_change_report(_companies_from_csv(args.input_csv), EvidenceStore(args.evidence_store))
+    companies = _companies_from_csv(args.input_csv)
+    try:
+        batch = _select_batch(companies, args.batch_size, args.batch_number)
+    except ValueError as error:
+        parser.error(str(error))
+    report = build_change_report(batch, EvidenceStore(args.evidence_store))
+    report["batch"] = {
+        "number": args.batch_number,
+        "size": args.batch_size,
+        "total_companies": len(companies),
+    }
     if not args.dry_run:
         output = args.output_report or Path("data/refresh_reports") / f"research_refresh_{datetime.now(timezone.utc):%Y%m%dT%H%M%SZ}.json"
         write_report(report, output)

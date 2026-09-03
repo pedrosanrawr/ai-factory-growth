@@ -23,6 +23,9 @@ class TestLLMClient(unittest.TestCase):
         ):
             self.assertTrue(llm_client.is_llm_configured())
 
+    def test_offline_provider_timeout_allows_long_structured_responses(self):
+        self.assertEqual(llm_client.REQUEST_TIMEOUT_SECONDS, 90)
+
     def test_get_llm_client_requires_a_key(self):
         with patch.dict("os.environ", {"GEMINI_API_KEY": ""}, clear=False):
             with self.assertRaises(llm_client.LLMConfigurationError) as error:
@@ -52,10 +55,10 @@ class TestLLMClient(unittest.TestCase):
                 user_prompt="Hello",
             )
 
-    def test_gemini_36_omits_unsupported_temperature(self):
+    def test_gemini_36_uses_low_thinking_without_temperature(self):
         self.assertEqual(
             llm_client._generation_config("gemini-3.6-flash", 0.2, 64),
-            {"max_output_tokens": 64},
+            {"max_output_tokens": 64, "thinking_level": "low"},
         )
 
     @patch("services.llm_client.get_llm_client")

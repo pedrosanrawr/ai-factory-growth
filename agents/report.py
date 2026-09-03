@@ -42,6 +42,10 @@ def run(records: list[dict],
                 "moat_notes": record.get("moat_notes", ""),
                 "growth_catalysts": record.get("growth_catalysts", ""),
                 "risk_notes": record.get("risk_notes", ""),
+                "moat_rationale": record.get("moat_rationale", ""),
+                "growth_rationale": record.get("growth_rationale", ""),
+                "risk_rationale": record.get("risk_rationale", ""),
+                "_cached_llm_analysis": bool(record.get("_cached_llm_analysis")),
                 "source_links": record.get("source_links", ""),
                 # Research refresh / evidence visibility (added by the
                 # controlled quarterly research refresh process). These are

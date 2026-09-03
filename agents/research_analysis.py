@@ -24,6 +24,8 @@ from services.llm_client import ask_llm_json, is_llm_configured
 CACHE_TTL_SECONDS = 24 * 60 * 60
 MIN_REQUEST_INTERVAL_SECONDS = 3.5  # < 20 requests/minute on Gemini free tier
 MAX_EVIDENCE_PER_ANALYSIS = 8
+MAX_RATIONALE_CHARACTERS = 600
+MAX_CITED_EVIDENCE = 3
 _request_lock = threading.Lock()
 _last_request_at = 0.0
 
@@ -31,15 +33,15 @@ RESPONSE_SCHEMA: dict[str, Any] = {
     "type": "object",
     "properties": {
         "moat_score": {"type": "integer", "minimum": 0, "maximum": 5},
-        "moat_rationale": {"type": "string", "minLength": 1},
+        "moat_rationale": {"type": "string", "minLength": 1, "maxLength": MAX_RATIONALE_CHARACTERS},
         "growth_forecast_pct": {"type": "number", "minimum": -100, "maximum": 500},
-        "growth_rationale": {"type": "string", "minLength": 1},
+        "growth_rationale": {"type": "string", "minLength": 1, "maxLength": MAX_RATIONALE_CHARACTERS},
         "concentration_risk": {"type": "number", "minimum": 0, "maximum": 1},
         "cyclicality_risk": {"type": "number", "minimum": 0, "maximum": 1},
         "execution_risk": {"type": "number", "minimum": 0, "maximum": 1},
-        "risk_rationale": {"type": "string", "minLength": 1},
+        "risk_rationale": {"type": "string", "minLength": 1, "maxLength": MAX_RATIONALE_CHARACTERS},
         "confidence": {"type": "number", "minimum": 0, "maximum": 1},
-        "evidence_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+        "evidence_ids": {"type": "array", "items": {"type": "string"}, "minItems": 1, "maxItems": MAX_CITED_EVIDENCE},
     },
     "required": [
         "moat_score", "moat_rationale", "growth_forecast_pct", "growth_rationale",
@@ -53,7 +55,8 @@ SYSTEM_PROMPT = """You are an equity-research analyst for AI Factory infrastruct
 Using only the supplied evidence, return one JSON assessment of the company's
 competitive moat, three-year AI-driven revenue CAGR, and concentration,
 cyclicality, and execution risks. Cite only supplied evidence URLs. Do not
-calculate a final ranking or TAFGS score."""
+calculate a final ranking or TAFGS score. Keep each rationale under 100 words
+and cite at most three URLs."""
 
 
 def _cache_path() -> Path:
@@ -200,7 +203,7 @@ def run(
                 progress_callback(f"Gemini analysis {index}/{total}: {company} (cached)")
             continue
         _wait_for_request_slot()
-        result = ask_llm_json(SYSTEM_PROMPT, _prompt(record), schema=RESPONSE_SCHEMA, max_tokens=1000)
+        result = ask_llm_json(SYSTEM_PROMPT, _prompt(record), schema=RESPONSE_SCHEMA, max_tokens=2048)
         retry_delay = _retry_delay_seconds(result.error) if not result.ok else None
         if retry_delay is not None:
             if progress_callback:
@@ -211,7 +214,7 @@ def run(
             time.sleep(retry_delay)
             _wait_for_request_slot()
             result = ask_llm_json(
-                SYSTEM_PROMPT, _prompt(record), schema=RESPONSE_SCHEMA, max_tokens=1000
+                SYSTEM_PROMPT, _prompt(record), schema=RESPONSE_SCHEMA, max_tokens=2048
             )
         if result.ok and result.data and _apply(record, result.data):
             _write_cache(key, result.data)

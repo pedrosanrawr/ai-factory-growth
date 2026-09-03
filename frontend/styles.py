@@ -433,6 +433,16 @@ td.profile-action-cell { text-align: center; }
 .profile-empty { color: #8190ad; font-size: 12px; }
 .profile-heading-status { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-left: auto; }
 .research-as-of { color: #94a8bf; font-size: 12px; white-space: nowrap; }
+.llm-analysis-badge {
+    background: rgba(80, 184, 207, 0.14);
+    color: #8eeaf4;
+    border: 1px solid rgba(80, 184, 207, 0.34);
+    border-radius: 6px;
+    padding: 3px 9px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
 .research-status-badge {
     display: inline-flex;
     align-items: center;

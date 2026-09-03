@@ -22,11 +22,13 @@ class TestResearchSnapshot(unittest.TestCase):
         target["moat_score"] = 1
         apply_snapshot(target, {source["company"]: snapshot_entry(source)})
         self.assertEqual(target["moat_score"], 4)
+        self.assertTrue(target["_cached_llm_analysis"])
 
         target["evidence"][0]["url"] = "https://example.com/new-source"
         target["moat_score"] = 1
         apply_snapshot(target, {source["company"]: snapshot_entry(source)})
         self.assertEqual(target["moat_score"], 1)
+        self.assertNotIn("_cached_llm_analysis", target)
 
     def test_round_trips_snapshot_file(self) -> None:
         with tempfile.TemporaryDirectory() as directory:

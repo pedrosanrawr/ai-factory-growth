@@ -54,6 +54,14 @@ class TestRefreshResearch(unittest.TestCase):
         self.assertEqual(company["analysis_status"], "needs_review")
         self.assertEqual(company["candidate_evidence"][0]["status"], "needs_review")
 
+    def test_select_batch_uses_one_indexed_csv_order(self) -> None:
+        companies = ["One", "Two", "Three", "Four", "Five"]
+        self.assertEqual(refresh._select_batch(companies, 2, 2), ["Three", "Four"])
+
+    def test_select_batch_rejects_invalid_values(self) -> None:
+        with self.assertRaises(ValueError):
+            refresh._select_batch(["One"], 0, 1)
+
     def test_approved_write_updates_csv_and_evidence_store_after_backup(self) -> None:
         with patch.object(refresh.research_sources, "fetch_company_research", return_value=[_document()]):
             report = refresh.build_change_report(["Acme Corp (ACME)"], EvidenceStore(str(self.store_path)))
