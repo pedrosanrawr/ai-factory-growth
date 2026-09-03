@@ -118,8 +118,6 @@ def _run_csv_fixture(csv_path: str, evidence_store: EvidenceStore | None = None)
             # offline analysis without fetching anything during dashboard load.
             record = migrate_legacy_record(record, csv_snapshot_date)
 
-        apply_snapshot(record, snapshots)
-
         # Numeric / Percentage fields
         record["operating_margin_pct"] = _to_float(row.get("Operating Margin %"))
         record["revenue_exposure_pct"] = _parse_pct(row.get("Revenue Exposure %"))
@@ -129,6 +127,10 @@ def _run_csv_fixture(csv_path: str, evidence_store: EvidenceStore | None = None)
         record["cyclicality_risk"] = _to_float(row.get("Cyclicality Risk"))
         record["execution_risk"] = _to_float(row.get("Execution Risk"))
         record["eff_score"] = _to_int(row.get("Efficiency Score"))
+
+        # Cached offline analysis is newer than the CSV baseline and only
+        # applies when its evidence fingerprint still matches this record.
+        apply_snapshot(record, snapshots)
 
         records.append(record)
 

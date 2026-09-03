@@ -1,3 +1,563 @@
 {
-  "records": {}
+  "records": {
+    "AECOM (ACM)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.4,
+      "cyclicality_risk": 0.5,
+      "evidence_fingerprint": "3971b440d74921e4d5b27f929954ee75e6de1a89e9d49f98e3750aa0439eb7e8",
+      "execution_risk": 0.4,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646823000051/0000936468-23-000051-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646822000048/0000936468-22-000048-index.htm"
+      ],
+      "growth_forecast_pct": 15.0,
+      "growth_rationale": "Growth is supported by a record $26.2B backlog (+8% YoY), accelerating hyperscaler and sovereign AI capex commitments, and public funding mandates (IIJA, CHIPS). AECOM targets a 15%+ adjusted EPS CAGR through FY2029 driven by high-margin AI data center engineering.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646823000051/0000936468-23-000051-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646822000048/0000936468-22-000048-index.htm"
+      ],
+      "moat_rationale": "AECOM benefits from strong technical capabilities and scale in specialized high-density AI campus infrastructure, such as leading the 500 MW Nostrum Evergreen project in Spain. An asset-light fee-for-service model and expertise in complex power, data center, and water infrastructure create solid competitive positioning.",
+      "moat_score": 3,
+      "research_as_of": "2026-09-03T04:38:39.821668+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646823000051/0000936468-23-000051-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646822000048/0000936468-22-000048-index.htm"
+      ],
+      "risk_rationale": "Risks include exposure to government funding shifts and sovereign debt constraints, enterprise investment cycle delays from high interest rates, talent acquisition bottlenecks in specialized engineering roles, and potential legacy contract disputes."
+    },
+    "Arista Networks (ANET)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.75,
+      "cyclicality_risk": 0.6,
+      "evidence_fingerprint": "8ebc0c2d60f2cc55f0daf69d5d0a9d368ab3ecf52534fe480a398f1c050a3d3e",
+      "execution_risk": 0.5,
+      "growth_evidence_ids": [
+        "https://investors.arista.com/financial-information/sec-filings/default.aspx",
+        "https://investors.arista.com/",
+        "https://www.macrotrends.net/stocks/charts/ANET/arista-networks/operating-margin"
+      ],
+      "growth_forecast_pct": 25.0,
+      "growth_rationale": "Growth is driven by strong AI-driven cloud networking demand, hyperscaler commitments (Microsoft, Meta, Alphabet, Oracle), and adoption of 400G/800G Ethernet solutions (https://investors.arista.com/financial-information/sec-filings/default.aspx).",
+      "moat_evidence_ids": [
+        "https://investors.arista.com/financial-information/sec-filings/default.aspx",
+        "https://investors.arista.com/",
+        "https://www.macrotrends.net/stocks/charts/ANET/arista-networks/operating-margin"
+      ],
+      "moat_rationale": "Arista maintains a strong moat through high-performance Ethernet switching platforms, routers, and its Extensible Operating System (EOS), positioning it well for next-generation AI cluster interconnects (https://investors.arista.com/).",
+      "moat_score": 4,
+      "research_as_of": "2026-09-03T04:45:38.133150+00:00",
+      "risk_evidence_ids": [
+        "https://investors.arista.com/financial-information/sec-filings/default.aspx",
+        "https://investors.arista.com/",
+        "https://www.macrotrends.net/stocks/charts/ANET/arista-networks/operating-margin"
+      ],
+      "risk_rationale": "Risks include high customer concentration with key hyperscalers, exposure to cloud infrastructure capex cycles, and execution challenges in delivering next-gen Ethernet leadership (https://www.macrotrends.net/stocks/charts/ANET/arista-networks/operating-margin)."
+    },
+    "Broadcom (AVGO)": {
+      "analysis_confidence": 0.9,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.75,
+      "cyclicality_risk": 0.6,
+      "evidence_fingerprint": "8923393abc4a591adf7446210904b04efee646593dc22577a4bde6627629f26f",
+      "execution_risk": 0.45,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1213900/000121390025117587/0001213900-25-117587-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1829126/000182912625000486/0001829126-25-000486-index.htm"
+      ],
+      "growth_forecast_pct": 38.5,
+      "growth_rationale": "AI revenue growth is driven by massive multi-year hyperscaler commitments, rapid adoption of 800G/1.6T Ethernet networking, and the expansion of custom ASIC programs across major cloud service providers and sovereign AI projects.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1213900/000121390025117587/0001213900-25-117587-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1829126/000182912625000486/0001829126-25-000486-index.htm"
+      ],
+      "moat_rationale": "Broadcom possesses a powerful economic moat driven by technological leadership in merchant Ethernet switch silicon (Tomahawk/Jericho) and custom AI accelerator (XPU) co-development with top hyperscalers. Deep customer integration and high switching costs entrench its dominant position in AI cluster connectivity.",
+      "moat_score": 5,
+      "research_as_of": "2026-09-03T04:06:47.096213+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1213900/000121390025117587/0001213900-25-117587-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1829126/000182912625000486/0001829126-25-000486-index.htm"
+      ],
+      "risk_rationale": "Revenue is heavily concentrated among a few hyperscale cloud customers, creating vulnerability to hyperscaler capex cycles. Execution risks stem from delivering increasingly complex custom AI silicon and managing enterprise VMware integration."
+    },
+    "Cisco Systems (CSCO)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.45,
+      "cyclicality_risk": 0.55,
+      "evidence_fingerprint": "c49b12d8cbcb474b9e39420b67222500ec0cad53c7d720ee35e5c1061340c465",
+      "execution_risk": 0.5,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1144204/000114420408041528/0001144204-08-041528-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1193125/000119312507173844/0001193125-07-173844-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1006708/000100670803000017/0001006708-03-000017-index.htm"
+      ],
+      "growth_forecast_pct": 18.5,
+      "growth_rationale": "Growth is driven by AI infrastructure orders projected to hit $9B by FY2026, alongside product cycles in Silicon One, 800G optics, and growing demand across hyperscalers, sovereign AI projects, and enterprise customers.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1144204/000114420408041528/0001144204-08-041528-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1193125/000119312507173844/0001193125-07-173844-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1006708/000100670803000017/0001006708-03-000017-index.htm"
+      ],
+      "moat_rationale": "Cisco maintains a strong competitive moat via its deep domain footprint in enterprise and provider networking, proprietary Silicon One architecture, and comprehensive AI Ethernet switching platforms. High switching costs and extensive installed customer relationships protect its core market share.",
+      "moat_score": 4,
+      "research_as_of": "2026-09-03T04:45:23.244366+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1144204/000114420408041528/0001144204-08-041528-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1193125/000119312507173844/0001193125-07-173844-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1006708/000100670803000017/0001006708-03-000017-index.htm"
+      ],
+      "risk_rationale": "Key risks include reliance on major enterprise and cloud capex budgets, macroeconomic sensitivity impacting customer spending cycles, and execution challenges in integrating acquisitions while competing in fast-moving AI networking markets."
+    },
+    "Constellation Energy Corporation (CEG)": {
+      "analysis_confidence": 0.9,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.65,
+      "cyclicality_risk": 0.45,
+      "evidence_fingerprint": "e388ef0b3edd11894fb11d3b6eda930c64051f56971291ad3bff4e4ef61f55b2",
+      "execution_risk": 0.7,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000037/0001868275-26-000037-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000032/0001868275-26-000032-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465926045036/0001104659-26-045036-index.htm"
+      ],
+      "growth_forecast_pct": 22.0,
+      "growth_rationale": "AI-driven demand fuels an aggressive growth outlook, supported by a 5,650+ MW clean-energy PPA backlog, ~1 GW of nuclear uprates ($3.9B capex), and the strategic acquisition of Calpine (expanding the fleet to 55-60 GW). Target growth aligns with management guidance of a 20%+ EPS CAGR through 2029 and 2026 adjusted EPS targets of $11.00-$12.00.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000037/0001868275-26-000037-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000032/0001868275-26-000032-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465926045036/0001104659-26-045036-index.htm"
+      ],
+      "moat_rationale": "Constellation Energy maintains a high economic moat as the largest US nuclear operator, delivering rare 24/7 carbon-free baseload power to AI hyperscalers. Multi-decade power purchase agreements (PPAs)\u2014including 20-year contracts with Meta (1,121 MW) and Microsoft (835 MW)\u2014coupled with NRC operating licenses and federal support (e.g., $1B DOE loan guarantee) establish nearly insurmountable high-barrier-to-entry competitive advantages.",
+      "moat_score": 5,
+      "research_as_of": "2026-09-03T04:19:43.793998+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000037/0001868275-26-000037-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1868275/000186827526000032/0001868275-26-000032-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465926045036/0001104659-26-045036-index.htm"
+      ],
+      "risk_rationale": "Execution risk is high due to integrating the $16.4B Calpine acquisition (assuming ~$12.7B in debt) and navigating NRC safety/environmental regulatory processes for the Crane Clean Energy Center restart. Concentration risk stems from heavy dependency on a concentrated group of hyperscalers for long-term cash flow realization, while cyclicality is evidenced by FY2025 GAAP operating income falling 29.1% from hedging and tax-credit fluctuations."
+    },
+    "Credo Technology Group (CRDO)": {
+      "analysis_confidence": 0.8,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.85,
+      "cyclicality_risk": 0.7,
+      "evidence_fingerprint": "81696cadb159ddce321a1cca4b0b655a8c119ed77c191c098f76396a6efd331c",
+      "execution_risk": 0.65,
+      "growth_evidence_ids": [
+        "https://investors.credosemi.com/financial-information/sec-filings",
+        "https://investors.credosemi.com",
+        "https://stockanalysis.com/stocks/crdo/financials/"
+      ],
+      "growth_forecast_pct": 45.0,
+      "growth_rationale": "Credo is positioned for strong three-year revenue CAGR driven by rapid deployment of AI GPU clusters requiring high-speed connectivity. Growth catalysts include the expansion of 800G AEC deployments, the upcoming transition to 1.6T networking, PCIe Gen6 adoption, and rising demand from hyperscalers and sovereign AI deployments.",
+      "moat_evidence_ids": [
+        "https://investors.credosemi.com/financial-information/sec-filings",
+        "https://investors.credosemi.com",
+        "https://stockanalysis.com/stocks/crdo/financials/"
+      ],
+      "moat_rationale": "Credo Technology Group possesses a moderate economic moat built on proprietary low-power SerDes IP, Active Electrical Cables (AECs), retimers, and optical DSPs tailored for high-speed networking in hyperscale AI data centers. Switching costs and specialized technical expertise in high-bandwidth, energy-efficient connectivity provide a defensible niche against broader semiconductor competition.",
+      "moat_score": 3,
+      "research_as_of": "2026-09-03T04:18:19.005521+00:00",
+      "risk_evidence_ids": [
+        "https://investors.credosemi.com/financial-information/sec-filings",
+        "https://investors.credosemi.com",
+        "https://stockanalysis.com/stocks/crdo/financials/"
+      ],
+      "risk_rationale": "Concentration risk is high due to heavy reliance on a small set of hyperscale cloud customers. Revenue is subject to cyclical cloud CapEx and AI infrastructure spending cycles. Execution risk centers on maintaining technological leadership against larger chipmakers, scaling production, and competing with alternative optical interconnects."
+    },
+    "Dell Technologies (DELL)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.7,
+      "cyclicality_risk": 0.6,
+      "evidence_fingerprint": "f84c55b85ac6a1a1e667c43ea5325c631e5b0364139a25db7dcb0f5c707a1c9d",
+      "execution_risk": 0.5,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000039/0001571996-26-000039-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/0001571996-26-000021-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/0001571996-25-000118-index.htm"
+      ],
+      "growth_forecast_pct": 35.0,
+      "growth_rationale": "Revenue growth is anchored by a record $43B FY2026 AI server backlog, accelerating enterprise and sovereign AI commitments, and product cycles scaling toward a ~$50B FY2027 AI server revenue target tied to next-generation NVIDIA Vera Rubin-based deployments.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000039/0001571996-26-000039-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/0001571996-26-000021-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/0001571996-25-000118-index.htm"
+      ],
+      "moat_rationale": "Dell possesses a moderate moat driven by its comprehensive Dell AI Factory solution, incorporating PowerEdge AI-optimized servers, storage, and networking bundled with partner technology. Strong enterprise distribution and full-stack integration capabilities create switching costs, though commodity hardware competition and mid-single-digit margins limit overall pricing power.",
+      "moat_score": 3,
+      "research_as_of": "2026-09-03T04:44:37.166854+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000039/0001571996-26-000039-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1571996/000157199626000021/0001571996-26-000021-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1571996/000157199625000118/0001571996-25-000118-index.htm"
+      ],
+      "risk_rationale": "Concentration risk is high due to strong dependency on NVIDIA for critical AI silicon. Cyclicality risk reflects lumpy order patterns tied to power availability and customer data-center readiness. Execution risk is moderate as Dell targets thin mid-single-digit operating margins on AI server deployments."
+    },
+    "Eaton Corporation plc (ETN)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.45,
+      "cyclicality_risk": 0.35,
+      "evidence_fingerprint": "afe8da0f7f8195addde064be20dabd56276b1b726b016e6fb782b91958c65333",
+      "execution_risk": 0.4,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/58492/000005849225000136/0000058492-25-000136-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/58492/000005849224000174/0000058492-24-000174-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm"
+      ],
+      "growth_forecast_pct": 35.0,
+      "growth_rationale": "AI-driven growth is supported by an Electrical Americas backlog of $13.2B (+31% YoY) and total backlog exceeding $19B. Growth is accelerated by 17 GW of planned data-center commitments for 2026 and Boyd Thermal sales targeted to hit $1.7B in 2026 (+100%+ YoY).",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/58492/000005849225000136/0000058492-25-000136-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/58492/000005849224000174/0000058492-24-000174-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm"
+      ],
+      "moat_rationale": "Eaton possesses a strong moat driven by deep engineering integration with AI ecosystem leaders like NVIDIA (co-developing Beam Rubin DSX) and high market capture (~40% win rate on North American mega-projects). Its proprietary liquid cooling capabilities via Boyd Thermal create substantial technical differentiation.",
+      "moat_score": 4,
+      "research_as_of": "2026-09-03T04:45:56.266222+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/58492/000005849225000136/0000058492-25-000136-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/58492/000005849224000174/0000058492-24-000174-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm"
+      ],
+      "risk_rationale": "Key risks include expanding reliance on hyperscaler megaproject commitments, temporary margin pressure from capacity-ramp costs, and integration/leverage risks associated with rising debt and goodwill from the Boyd Thermal and Ultra PCS transactions."
+    },
+    "Fluor Corporation (FLR)": {
+      "analysis_confidence": 0.8,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.5,
+      "cyclicality_risk": 0.6,
+      "evidence_fingerprint": "e5af3a81fc096676f1eeb774309520912704b4c137552d9577c1ad202f2a176d",
+      "execution_risk": 0.7,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1287808/000128780819000004/0001287808-19-000004-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465918031293/0001104659-18-031293-index.htm"
+      ],
+      "growth_forecast_pct": 25.0,
+      "growth_rationale": "Growth is supported by a massive $25.5B backlog (81% reimbursable), accelerating hyperscaler and AI infrastructure EPC demand, grid interconnects, and non-dilutive capital from NuScale monetization (~$1.95B total). Strategic long-term federal contracts add further revenue stability.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1287808/000128780819000004/0001287808-19-000004-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465918031293/0001104659-18-031293-index.htm"
+      ],
+      "moat_rationale": "Fluor exhibits a narrow moat driven by scale and specialized engineering capability in large-scale infrastructure, such as its $3-4B, 480-MW Kentucky data center campus. However, engineering and construction services remain highly competitive and commoditized compared to core AI tech providers.",
+      "moat_score": 2,
+      "research_as_of": "2026-09-03T04:38:44.780783+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1287808/000128780819000004/0001287808-19-000004-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465918031293/0001104659-18-031293-index.htm"
+      ],
+      "risk_rationale": "Execution risk remains significant due to historical lump-sum project cost overruns and litigation (e.g., $643M Santos judgment). Cyclicality stems from client capex timing in Energy and Mission Solutions, alongside concentration risk tied to government spending priorities."
+    },
+    "GE Vernova Inc. (GEV)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.5,
+      "cyclicality_risk": 0.6,
+      "evidence_fingerprint": "84a44876ac266b0049842614bebe05a0b05aab70e9323867aefe7165056b665a",
+      "execution_risk": 0.55,
+      "growth_evidence_ids": [
+        "https://www.gevernova.com/news/press-releases/ge-vernova-reports-fourth-quarter-full-year-2025-financial-results",
+        "https://www.sec.gov/Archives/edgar/data/0001996810/000199681026000147/0001996810-26-000147-index.htm//stockanalysis.com/stocks/gev/"
+      ],
+      "growth_forecast_pct": 18.5,
+      "growth_rationale": "Growth is propelled by a $176B backlog targeting $200B by 2027, turbine backlog expansion to 116 GW, ~$300M revenue potential per GW of data center capacity, and raised FY2026 revenue guidance of $45.5B-$46.5B.",
+      "moat_evidence_ids": [
+        "https://www.gevernova.com/news/press-releases/ge-vernova-reports-fourth-quarter-full-year-2025-financial-results",
+        "https://www.sec.gov/Archives/edgar/data/0001996810/000199681026000147/0001996810-26-000147-index.htm//stockanalysis.com/stocks/gev/"
+      ],
+      "moat_rationale": "GE Vernova possesses a strong competitive moat driven by mission-critical gas turbine technology and electrification infrastructure (grid transformers, switchgear, substations) needed for AI data center baseload power and grid interconnection, supported by a massive $176B backlog.",
+      "moat_score": 4,
+      "research_as_of": "2026-09-03T04:46:31.835303+00:00",
+      "risk_evidence_ids": [
+        "https://www.gevernova.com/news/press-releases/ge-vernova-reports-fourth-quarter-full-year-2025-financial-results",
+        "https://www.sec.gov/Archives/edgar/data/0001996810/000199681026000147/0001996810-26-000147-index.htm//stockanalysis.com/stocks/gev/"
+      ],
+      "risk_rationale": "Key risks include dependence on continued hyperscaler/utility capex, ongoing Wind segment losses ($275M in Q2 2026), manufacturing capacity constraints, and potential earnings volatility given high valuation multiples."
+    },
+    "Hewlett Packard Enterprise Co. (HPE)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.65,
+      "cyclicality_risk": 0.7,
+      "evidence_fingerprint": "cecb58863225f5bd352c6c42e75fbefb57c3c5027cb4902dcc97edf93041bf12",
+      "execution_risk": 0.8,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1474432/000147443225000025/0001474432-25-000025-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1384905/000138490523000036/0001384905-23-000036-index.htm"
+      ],
+      "growth_forecast_pct": 28.5,
+      "growth_rationale": "Growth is driven by an AI server backlog reaching nearly $6B, strong demand from sovereign and enterprise customers representing over 60% of cumulative AI orders, and structural expanded market opportunities in AI-native networking.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1474432/000147443225000025/0001474432-25-000025-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1384905/000138490523000036/0001384905-23-000036-index.htm"
+      ],
+      "moat_rationale": "HPE maintains a moderate competitive moat built on enterprise IT infrastructure, AI-optimized servers, GreenLake hybrid cloud solutions, and enhanced networking capabilities via its Juniper Networks acquisition. However, it faces intense competitive pressure in hardware compute.",
+      "moat_score": 3,
+      "research_as_of": "2026-09-03T04:17:25.112919+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1474432/000147443225000025/0001474432-25-000025-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1384905/000138490523000036/0001384905-23-000036-index.htm"
+      ],
+      "risk_rationale": "Execution risk is elevated due to the large-scale integration of the $14B Juniper Networks acquisition. AI shipment timelines remain sensitive to concentrated sovereign orders, and operating margins exhibit quarterly cyclicality based on server mix."
+    },
+    "Jacobs Solutions Inc. (J)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.6,
+      "cyclicality_risk": 0.5,
+      "evidence_fingerprint": "fa1861d09305c00860675c6a228dc2b25dcb06f8c51e06cbd438574f95a4bae6",
+      "execution_risk": 0.5,
+      "growth_evidence_ids": [
+        "https://invest.jacobs.com/overview/default.aspx",
+        "https://invest.jacobs.com/financials/annual-reports/default.aspx",
+        "https://invest.jacobs.com/financials/sec-filings/default.aspx"
+      ],
+      "growth_forecast_pct": 21.7,
+      "growth_rationale": "Growth is driven by a record total backlog of $27.0B (+21.7% YoY) with a TTM book-to-bill ratio >1.1x, fueled by accelerating demand for hyperscaler AI data centers, grid interconnection, and sovereign AI commitments.",
+      "moat_evidence_ids": [
+        "https://invest.jacobs.com/overview/default.aspx",
+        "https://invest.jacobs.com/financials/annual-reports/default.aspx",
+        "https://invest.jacobs.com/financials/sec-filings/default.aspx"
+      ],
+      "moat_rationale": "Jacobs demonstrates a solid competitive moat driven by its strategic partnership with NVIDIA for AI Factory digital twin blueprints, alongside deep domain expertise in gigawatt-scale data center design, power, and liquid cooling solutions.",
+      "moat_score": 3,
+      "research_as_of": "2026-09-03T04:38:34.331714+00:00",
+      "risk_evidence_ids": [
+        "https://invest.jacobs.com/overview/default.aspx",
+        "https://invest.jacobs.com/financials/annual-reports/default.aspx",
+        "https://invest.jacobs.com/financials/sec-filings/default.aspx"
+      ],
+      "risk_rationale": "Concentration risk stems from heavy reliance on federal/municipal public infrastructure funding priorities. Cyclicality is tied to macro enterprise capex and interest rates, while execution risk relates to potential cost overruns on fixed-price projects and labor shortages."
+    },
+    "Modine Manufacturing (MOD)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.7,
+      "cyclicality_risk": 0.6,
+      "evidence_fingerprint": "c970f7fb43dd73bf3bd47d2a005ab2bcf82533f517474ffcda42b3fca3c22439",
+      "execution_risk": 0.65,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1628280/000162828022004584/0001628280-22-004584-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1628280/000162828021004275/0001628280-21-004275-index.htm"
+      ],
+      "growth_forecast_pct": 22.5,
+      "growth_rationale": "Data center cooling revenue surged to 25% of net sales in FY2025, driven by a 102% YoY sales increase and FY2026 sales growth guidance raised to 20-25%.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1628280/000162828022004584/0001628280-22-004584-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1628280/000162828021004275/0001628280-21-004275-index.htm"
+      ],
+      "moat_rationale": "Modine established a dedicated Data Centers division for liquid cooling and secured a $180M order from a leading AI infrastructure developer, transitioning away from legacy automotive segments.",
+      "moat_score": 3,
+      "research_as_of": "2026-09-03T04:36:53.982332+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1628280/000162828022004584/0001628280-22-004584-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1628280/000162828021004275/0001628280-21-004275-index.htm"
+      ],
+      "risk_rationale": "Key risks include heavy customer concentration in hyperscaler AI capex, margin compression from supply chain and tariff friction, and overbuilding capacity if demand normalizes."
+    },
+    "Munters Group (MTRS, Nasdaq Stockholm)": {
+      "analysis_confidence": 0.8,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.7,
+      "cyclicality_risk": 0.5,
+      "evidence_fingerprint": "7b08ba0220070b30c2488f73f8bf4408094f13805d5f6bdac34b03aa0e018ebf",
+      "execution_risk": 0.6,
+      "growth_evidence_ids": [
+        "https://www.munters.com/globalassets/story-page-import-images/munters-annual-and-sustainability-report-20252.pdf",
+        "https://www.munters.com/globalassets/story-page-import-images/munters-full-year-report-20252.pdf",
+        "https://www.investing.com/news/stock-market-news/munters-secures-183m-ai-cooling-order-for-us-data-center-93CH-4634703"
+      ],
+      "growth_forecast_pct": 32.0,
+      "growth_rationale": "Growth is catalyzed by rapid backlog expansion and order intake up 32% YoY, led by strong DCT demand. Secured high-value hyperscale wins, including a $183M AI cooling order for a US data center scheduled for 2026 delivery, underscore accelerated multi-year top-line momentum.",
+      "moat_evidence_ids": [
+        "https://www.munters.com/globalassets/story-page-import-images/munters-annual-and-sustainability-report-20252.pdf",
+        "https://www.munters.com/globalassets/story-page-import-images/munters-full-year-report-20252.pdf",
+        "https://www.investing.com/news/stock-market-news/munters-secures-183m-ai-cooling-order-for-us-data-center-93CH-4634703"
+      ],
+      "moat_rationale": "Munters exhibits a moderate competitive moat built on specialised OEM expertise in custom air and liquid cooling architectures for data centers via its Data Center Technologies (DCT) segment. Tech differentiation and deep engineering integration with hyperscalers create customer switching costs, though intense competition in data center infrastructure limits pricing power.",
+      "moat_score": 3,
+      "research_as_of": "2026-09-03T04:37:03.922792+00:00",
+      "risk_evidence_ids": [
+        "https://www.munters.com/globalassets/story-page-import-images/munters-annual-and-sustainability-report-20252.pdf",
+        "https://www.munters.com/globalassets/story-page-import-images/munters-full-year-report-20252.pdf",
+        "https://www.investing.com/news/stock-market-news/munters-secures-183m-ai-cooling-order-for-us-data-center-93CH-4634703"
+      ],
+      "risk_rationale": "High concentration risk stems from lumpiness and reliance on large hyperscale projects. Cyclicality and profitability face headwinds from currency exposure and tariffs. Execution risks persist due to product transition expenses and dual-site cost pressures while ramping up capacity."
+    },
+    "NVIDIA Corporation (NVDA)": {
+      "analysis_confidence": 0.9,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.36,
+      "cyclicality_risk": 0.65,
+      "evidence_fingerprint": "16d9346ee4628a6d1de80107703e415cca5a184df6bc6774398183e4a63b79cc",
+      "execution_risk": 0.55,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/0001045810-26-000021-index.htm//www.fool.com/earnings/call-transcripts/2026/02/25/nvidia-nvda-q4-2026-earnings-call-transcript/",
+        "https://www.macrotrends.net/stocks/charts/NVDA/nvidia/operating-margin"
+      ],
+      "growth_forecast_pct": 50.0,
+      "growth_rationale": "Revenue CAGR is driven by an estimated ~$1T backlog in Blackwell and Rubin orders through 2027, big-four hyperscaler capex doubling to $725B in 2026, and sovereign AI revenue tripling to $30B+ (https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/0001045810-26-000021-index.htm//www.fool.com/earnings/call-transcripts/2026/02/25/nvidia-nvda-q4-2026-earnings-call-transcript/). The annual product cadence sustains high growth.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/0001045810-26-000021-index.htm//www.fool.com/earnings/call-transcripts/2026/02/25/nvidia-nvda-q4-2026-earnings-call-transcript/",
+        "https://www.macrotrends.net/stocks/charts/NVDA/nvidia/operating-margin"
+      ],
+      "moat_rationale": "NVIDIA maintains a wide competitive moat as the pioneer of accelerated computing, providing full-stack hardware, advanced chips, systems, and proprietary software for AI factories. As cited in https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/0001045810-26-000021-index.htm//www.fool.com/earnings/call-transcripts/2026/02/25/nvidia-nvda-q4-2026-earnings-call-transcript/ and https://www.macrotrends.net/stocks/charts/NVDA/nvidia/operating-margin, its integrated compute and networking ecosystem underpins data center AI deployments globally.",
+      "moat_score": 5,
+      "research_as_of": "2026-09-03T03:51:25.527476+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/0001045810-26-000021-index.htm//www.fool.com/earnings/call-transcripts/2026/02/25/nvidia-nvda-q4-2026-earnings-call-transcript/",
+        "https://www.macrotrends.net/stocks/charts/NVDA/nvidia/operating-margin"
+      ],
+      "risk_rationale": "Customer concentration is notable with two clients accounting for 36% (22% and 14%) of FY2026 revenue. Cyclicality stems from long lead times and non-cancellable orders causing supply/demand mismatches, while an aggressive annual cadence increases transition risk (https://www.sec.gov/Archives/edgar/data/1045810/000104581026000021/0001045810-26-000021-index.htm//www.fool.com/earnings/call-transcripts/2026/02/25/nvidia-nvda-q4-2026-earnings-call-transcript/)."
+    },
+    "Quanta Services, Inc. (PWR)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.35,
+      "cyclicality_risk": 0.45,
+      "evidence_fingerprint": "0a8c42f7bf0298aef107ce759562d6b4a87e5cc33b8a5e16e86a138474702161",
+      "execution_risk": 0.55,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/874238/000087423826000024/0000874238-26-000024-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646823000051/0000936468-23-000051-index.htm"
+      ],
+      "growth_forecast_pct": 14.5,
+      "growth_rationale": "Growth is driven by a record ~$48.5B backlog and a multi-trillion-dollar infrastructure modernization cycle, with management targeting ~$43.5B in revenue by 2028 alongside expanding AI data center grid interconnect demand.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/874238/000087423826000024/0000874238-26-000024-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646823000051/0000936468-23-000051-index.htm"
+      ],
+      "moat_rationale": "Quanta Services possesses a solid competitive moat driven by specialized craft skilled labor, extensive scale in electrical infrastructure construction, and deep operational relationships with utilities and hyperscalers for large-load power interconnections and AI data center builds.",
+      "moat_score": 3,
+      "research_as_of": "2026-09-03T04:38:50.689866+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/874238/000087423826000024/0000874238-26-000024-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646824000052/0000936468-24-000052-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/936468/000093646823000051/0000936468-23-000051-index.htm"
+      ],
+      "risk_rationale": "Key risks include industry-wide skilled labor shortages, supply-chain bottlenecks for transformers and switchgear, permitting delays, and high growth expectations embedded in valuation."
+    },
+    "Siemens Energy AG (ENR.DE / SMEGF)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.55,
+      "cyclicality_risk": 0.65,
+      "evidence_fingerprint": "b17111788abcb37e4aaa31185d544f6e0e41534d0e0b7c97f40029f838bdc54d",
+      "execution_risk": 0.6,
+      "growth_evidence_ids": [
+        "https://www.siemens-energy.com/global/en/home/press-releases/earnings-release-q4-fy-2025.html",
+        "https://www.siemens-energy.com/global/en/home/press-releases/siemens-energy-fulfills-all-commitments---and-increases-mid-term.html",
+        "https://btw.media/en/siemens-energys-150b-backlog-grows-with-data-centre-demand"
+      ],
+      "growth_forecast_pct": 28.5,
+      "growth_rationale": "Growth is driven by AI data-center interconnect demand, grid modernization funding, and strong backlog conversion, evidenced by a 1.36 book-to-bill ratio in Q4 FY2025 and Grid Technologies US orders exceeding \u20ac21B (https://www.siemens-energy.com/global/en/home/press-releases/earnings-release-q4-fy-2025.html, https://www.siemens-energy.com/global/en/home/press-releases/siemens-energy-fulfills-all-commitments---and-increases-mid-term.html).",
+      "moat_evidence_ids": [
+        "https://www.siemens-energy.com/global/en/home/press-releases/earnings-release-q4-fy-2025.html",
+        "https://www.siemens-energy.com/global/en/home/press-releases/siemens-energy-fulfills-all-commitments---and-increases-mid-term.html",
+        "https://btw.media/en/siemens-energys-150b-backlog-grows-with-data-centre-demand"
+      ],
+      "moat_rationale": "Siemens Energy holds a robust competitive moat through its leading position in high-voltage grid equipment, HVDC transmission links, and gas turbines underpinning AI data-center power infrastructure. Its massive \u20ac138B record backlog creates significant technological high barriers to entry and long-term customer lock-in (https://www.siemens-energy.com/global/en/home/press-releases/earnings-release-q4-fy-2025.html, https://btw.media/en/siemens-energys-150b-backlog-grows-with-data-centre-demand).",
+      "moat_score": 4,
+      "research_as_of": "2026-09-03T04:19:36.709132+00:00",
+      "risk_evidence_ids": [
+        "https://www.siemens-energy.com/global/en/home/press-releases/earnings-release-q4-fy-2025.html",
+        "https://www.siemens-energy.com/global/en/home/press-releases/siemens-energy-fulfills-all-commitments---and-increases-mid-term.html",
+        "https://btw.media/en/siemens-energys-150b-backlog-grows-with-data-centre-demand"
+      ],
+      "risk_rationale": "Risks stem from dependency on large hyperscaler orders converting on schedule, ongoing quality/profitability drags from the Siemens Gamesa wind business turnaround, and capacity expansion risks in US manufacturing facilities (https://www.siemens-energy.com/global/en/home/press-releases/earnings-release-q4-fy-2025.html, https://btw.media/en/siemens-energys-150b-backlog-grows-with-data-centre-demand)."
+    },
+    "Super Micro Computer, Inc. (SMCI)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.85,
+      "cyclicality_risk": 0.8,
+      "evidence_fingerprint": "14752489fec75ef1043e35087ee4f0c4629115b84d0e0c008a367be2168df67e",
+      "execution_risk": 0.85,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/950170/000095017024071318/0000950170-24-071318-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1375365/000137536522000037/0001375365-22-000037-index.htm"
+      ],
+      "growth_forecast_pct": 65.0,
+      "growth_rationale": "Growth is driven by massive backlog expansion, including over $60B in new orders in fiscal Q4 2026 alone. Demand spans hyperscalers, sovereigns, and neoclouds ramping next-gen NVIDIA GB300 and AMD MI350/355 architectures. (Source: https://www.sec.gov/Archives/edgar/data/950170/000095017024071318/0000950170-24-071318-index.htm)",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/950170/000095017024071318/0000950170-24-071318-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1375365/000137536522000037/0001375365-22-000037-index.htm"
+      ],
+      "moat_rationale": "Super Micro Computer maintains a moderate moat driven by its Data Center Building Block Solutions architecture and early time-to-market with liquid- and air-cooled racks for NVIDIA (GB300 NVL72/HGX B300) and AMD (MI350/355) platforms. However, commoditization in server assembly limits pricing power. (Source: https://www.sec.gov/Archives/edgar/data/950170/000095017024071318/0000950170-24-071318-index.htm)",
+      "moat_score": 2,
+      "research_as_of": "2026-09-03T03:54:20.123637+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/950170/000095017024071318/0000950170-24-071318-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1375365/000137536522000037/0001375365-22-000037-index.htm"
+      ],
+      "risk_rationale": "Concentration risk is elevated due to heavy reliance on a few hyperscaler/neocloud accounts. Cyclicality and working capital pressures are shown by $6.6B operating cash outflows and cash dropping from $4.09B to $1.29B. Execution risk is acute due to export-control reviews and past accounting issues. (Source: https://www.sec.gov/Archives/edgar/data/950170/000095017024071318/0000950170-24-071318-index.htm)"
+    },
+    "Vertiv Holdings (VRT)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.7,
+      "cyclicality_risk": 0.6,
+      "evidence_fingerprint": "5d1aee7320f96c5838d88bb805b2991bc9819078c9d8724f221b73aa4837be5d",
+      "execution_risk": 0.65,
+      "growth_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465926088892/0001104659-26-088892-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465926086996/0001104659-26-086996-index.htm"
+      ],
+      "growth_forecast_pct": 28.5,
+      "growth_rationale": "AI-driven growth is backed by a $15B project backlog providing 12-18 months of forward revenue visibility. Accelerating liquid cooling demand, hyperscaler/sovereign AI commitments, and liquid cooling TAM expansion ($4.8B in 2025 to $27.1B by 2035) support robust CAGR and margin expansion toward 25% by 2029.",
+      "moat_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465926088892/0001104659-26-088892-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465926086996/0001104659-26-086996-index.htm"
+      ],
+      "moat_rationale": "Vertiv maintains a robust moat in data center thermal management, providing mission-critical air and liquid cooling infrastructure (CDUs, chillers, CRAHs) for high-density AI racks. A $15B project backlog and expanding liquid cooling adoption secure its market-leading position with tier-1 hyperscalers.",
+      "moat_score": 4,
+      "research_as_of": "2026-09-03T04:36:41.064282+00:00",
+      "risk_evidence_ids": [
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465926088892/0001104659-26-088892-index.htm",
+        "https://www.sec.gov/Archives/edgar/data/1104659/000110465926086996/0001104659-26-086996-index.htm"
+      ],
+      "risk_rationale": "High concentration risk stems from reliance on a select group of hyperscale and colocation buyers. Cyclicality exists if hyperscalers pause capex spending. Execution risk is driven by component supply bottlenecks during rapid production ramps and a premium valuation sensitive to operational missteps."
+    },
+    "nVent Electric plc (NVT)": {
+      "analysis_confidence": 0.85,
+      "analysis_status": "needs_review",
+      "concentration_risk": 0.65,
+      "cyclicality_risk": 0.6,
+      "evidence_fingerprint": "6d5089bd46275831639c54e7e51465c13e8ced727c6afcb0f6e22e7a04163905",
+      "execution_risk": 0.55,
+      "growth_evidence_ids": [
+        "https://www.theglobeandmail.com/investing/markets/stocks/NVT/pressreleases/117994/nvent-electric-rides-data-center-wave-in-earnings/",
+        "https://macrotrends.net/stocks/charts/NVT/nvent-electric/operating-margin",
+        "https://www.kavout.com/market-lens/why-is-nvent-electric-a-key-player-in-the-ai-data-center-boom"
+      ],
+      "growth_forecast_pct": 35.0,
+      "growth_rationale": "Data center revenues expanded from ~$600M in FY2024 to ~$1.0B in FY2025. Strong backlog expansion to $2.3B (~3x prior year) and Q4 2025 organic order growth of ~30% support robust multi-year growth.",
+      "moat_evidence_ids": [
+        "https://www.theglobeandmail.com/investing/markets/stocks/NVT/pressreleases/117994/nvent-electric-rides-data-center-wave-in-earnings/",
+        "https://macrotrends.net/stocks/charts/NVT/nvent-electric/operating-margin",
+        "https://www.kavout.com/market-lens/why-is-nvent-electric-a-key-player-in-the-ai-data-center-boom"
+      ],
+      "moat_rationale": "nVent holds a solid competitive position in liquid cooling and enclosures, supplying critical power distribution, electrical protection, and direct-to-chip cooling systems for AI data centers and grid infrastructure.",
+      "moat_score": 3,
+      "research_as_of": "2026-09-03T04:38:25.629789+00:00",
+      "risk_evidence_ids": [
+        "https://www.theglobeandmail.com/investing/markets/stocks/NVT/pressreleases/117994/nvent-electric-rides-data-center-wave-in-earnings/",
+        "https://macrotrends.net/stocks/charts/NVT/nvent-electric/operating-margin",
+        "https://www.kavout.com/market-lens/why-is-nvent-electric-a-key-player-in-the-ai-data-center-boom"
+      ],
+      "risk_rationale": "Key risks include growing reliance on large hyperscaler orders, inflation/tariff exposure ($80M incremental tariffs expected in 2026), and portfolio transformation/capacity ramp inefficiencies."
+    }
+  }
 }

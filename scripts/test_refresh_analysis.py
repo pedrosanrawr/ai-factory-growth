@@ -8,6 +8,17 @@ from services.research_snapshot import load_snapshot
 
 
 class TestRefreshAnalysis(unittest.TestCase):
+    def test_select_batch_uses_one_indexed_csv_order(self) -> None:
+        records = [{"company": name} for name in ("One", "Two", "Three", "Four", "Five")]
+        self.assertEqual(
+            [record["company"] for record in refresh_analysis._select_batch(records, 2, 3)],
+            ["Five"],
+        )
+
+    def test_select_batch_rejects_invalid_values(self) -> None:
+        with self.assertRaises(ValueError):
+            refresh_analysis._select_batch([], 5, 0)
+
     @patch("scripts.refresh_analysis.analyze_research")
     @patch("scripts.refresh_analysis.ingest_companies")
     @patch("scripts.refresh_analysis.is_llm_configured", return_value=True)

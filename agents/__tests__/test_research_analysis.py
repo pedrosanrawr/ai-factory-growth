@@ -51,6 +51,12 @@ class TestResearchAnalysis(unittest.TestCase):
         self.assertTrue(first["_combined_llm_attempted"])
         self.assertEqual(first["analysis_status"], "needs_review")
         self.assertEqual(second["growth_forecast_pct"], 25.0)
+        self.assertEqual(ask.call_args.kwargs["max_tokens"], 2048)
+
+    def test_response_schema_limits_variable_length_output(self) -> None:
+        properties = research_analysis.RESPONSE_SCHEMA["properties"]
+        self.assertEqual(properties["moat_rationale"]["maxLength"], 600)
+        self.assertEqual(properties["evidence_ids"]["maxItems"], 3)
 
     @patch("agents.research_analysis.MIN_REQUEST_INTERVAL_SECONDS", 0)
     @patch("agents.research_analysis.is_llm_configured", return_value=True)

@@ -16,7 +16,8 @@ from jsonschema.exceptions import SchemaError, ValidationError
 
 
 DEFAULT_MODEL = "gemini-3.6-flash"
-REQUEST_TIMEOUT_SECONDS = 30
+# Offline evidence analysis can take longer than interactive dashboard work.
+REQUEST_TIMEOUT_SECONDS = 90
 
 # Keep this mapping so an older local .env setting is upgraded automatically.
 MODEL_ALIASES = {
@@ -24,6 +25,7 @@ MODEL_ALIASES = {
 }
 
 MODELS_WITHOUT_SAMPLING_PARAMETERS = {"gemini-3.6-flash"}
+MODELS_WITH_TUNABLE_THINKING = {"gemini-3.6-flash"}
 
 
 
@@ -129,11 +131,14 @@ def _validate_common_input(
         raise ValueError("user_prompt must be a non-empty string.")
 
 
-def _generation_config(model: str, temperature: float, max_tokens: int) -> dict[str, int | float]:
+def _generation_config(model: str, temperature: float, max_tokens: int) -> dict[str, int | float | str]:
     """Avoid unsupported sampling parameters for current Gemini 3 models."""
-    config: dict[str, int | float] = {"max_output_tokens": max(1, int(max_tokens))}
+    config: dict[str, int | float | str] = {"max_output_tokens": max(1, int(max_tokens))}
     if model not in MODELS_WITHOUT_SAMPLING_PARAMETERS:
         config["temperature"] = max(0.01, min(2.0, float(temperature)))
+    if model in MODELS_WITH_TUNABLE_THINKING:
+        # This task extracts fixed fields; low thinking leaves room for complete JSON.
+        config["thinking_level"] = "low"
     return config
 
 

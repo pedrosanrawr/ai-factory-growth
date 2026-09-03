@@ -31,6 +31,17 @@ python -m scripts.refresh_research --dry-run
 python -m scripts.refresh_analysis
 ```
 
+Both refresh commands process five companies by default. Run the next batch by
+increasing `--batch-number`; the CSV order stays unchanged:
+
+```bash
+python -m scripts.refresh_research --batch-number 2
+python -m scripts.refresh_analysis --batch-number 2
+```
+
+Use `--batch-size` only when a smaller or larger batch is needed, for example
+`--batch-size 3 --batch-number 1`.
+
 `refresh_analysis` reuses cached Gemini responses when the company evidence is
 unchanged. The dashboard only reads `data/research_snapshots/latest.json`; it
 never waits for Gemini. A changed source invalidates that company's snapshot,

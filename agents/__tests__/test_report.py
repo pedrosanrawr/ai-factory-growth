@@ -117,6 +117,24 @@ class TestReportEvidenceFields(unittest.TestCase):
         self.assertEqual(profile["analysis_confidence"], 0.92)
         self.assertEqual(profile["evidence"], [evidence_item])
 
+    def test_cached_llm_fields_pass_through_to_the_profile(self) -> None:
+        record = make_record()
+        record.update(
+            {
+                "_cached_llm_analysis": True,
+                "moat_rationale": "Cached moat analysis.",
+                "growth_rationale": "Cached growth analysis.",
+                "risk_rationale": "Cached risk analysis.",
+            }
+        )
+
+        profiles, _ = run([record])
+
+        self.assertTrue(profiles[0]["_cached_llm_analysis"])
+        self.assertEqual(profiles[0]["moat_rationale"], "Cached moat analysis.")
+        self.assertEqual(profiles[0]["growth_rationale"], "Cached growth analysis.")
+        self.assertEqual(profiles[0]["risk_rationale"], "Cached risk analysis.")
+
     def test_needs_review_status_passes_through_without_confidence(self) -> None:
         record = make_record()
         record.update({"analysis_status": "needs_review", "analysis_confidence": None})

@@ -43,12 +43,15 @@ def load_snapshot(path: str | Path | None = None) -> dict[str, dict]:
 
 
 def apply_snapshot(record: dict, snapshots: dict[str, dict]) -> None:
+    record.pop("_cached_llm_analysis", None)
     snapshot = snapshots.get(str(record.get("company", "")), {})
     if not isinstance(snapshot, dict) or snapshot.get("evidence_fingerprint") != evidence_fingerprint(record):
         return
     for field in ANALYSIS_FIELDS:
         if field in snapshot:
             record[field] = snapshot[field]
+    # UI-only marker: this record received a valid cached Gemini assessment.
+    record["_cached_llm_analysis"] = True
 
 
 def snapshot_entry(record: dict) -> dict:

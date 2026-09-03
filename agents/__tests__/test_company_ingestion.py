@@ -1,6 +1,7 @@
 import tempfile
 import unittest
 from pathlib import Path
+from unittest.mock import patch
 
 import pandas as pd
 
@@ -10,7 +11,8 @@ from services.evidence_store import EvidenceStore, make_evidence_item
 
 class TestCompanyIngestion(unittest.TestCase):
     def test_loads_and_maps_the_project_csv(self) -> None:
-        records = run()
+        with patch("agents.company_ingestion.load_snapshot", return_value={}):
+            records = run()
 
         self.assertEqual(len(records), 20)
         first = records[0]
@@ -98,6 +100,28 @@ class TestCompanyIngestion(unittest.TestCase):
         self.assertEqual(records[0]["analysis_status"], "needs_review")
         self.assertEqual(records[0]["research_as_of"], "2026-09-02")
         self.assertEqual(records[0]["evidence"], [evidence])
+
+    def test_cached_analysis_is_applied_after_csv_baseline(self) -> None:
+        rows = [{column: 0 for column in REQUIRED_COLUMNS}]
+        rows[0].update({
+            "Company Name + Ticker": "Example Corp (EXM)",
+            "Primary AI Factory Role": "Networking",
+            "Moat Score": 2,
+            "Growth Forecast %": 10,
+        })
+
+        def apply_cached_analysis(record, _snapshots):
+            record["moat_score"] = 4
+            record["growth_forecast_pct"] = 30.0
+
+        with tempfile.TemporaryDirectory() as directory:
+            csv_path = Path(directory) / "companies.csv"
+            pd.DataFrame(rows).to_csv(csv_path, index=False)
+            with patch("agents.company_ingestion.apply_snapshot", side_effect=apply_cached_analysis):
+                records = run(str(csv_path))
+
+        self.assertEqual(records[0]["moat_score"], 4)
+        self.assertEqual(records[0]["growth_forecast_pct"], 30.0)
 
 
 if __name__ == "__main__":
