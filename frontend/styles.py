@@ -483,7 +483,7 @@ td.profile-action-cell { text-align: center; }
 .source-link:hover, .evidence-pill:hover { background: #223c54; border-color: #4b718d; color: #d7fbff !important; }
 .profile-empty { color: #8190ad; font-size: 12px; }
 .profile-heading-status { display: flex; align-items: center; gap: 9px; flex-wrap: wrap; margin-left: auto; }
-.profile-ai-enhanced-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 18px; margin: 0 2px 10px; }
+.profile-ai-enhanced-row { display: flex; align-items: center; justify-content: space-between; gap: 10px; min-height: 18px; margin: 0 2px; padding: 8px 0; position: relative; top: -11px; }
 .profile-ai-enhanced-snapshot { color: #718095; font-size: 11px; }
 .research-as-of { color: #94a8bf; font-size: 12px; white-space: nowrap; }
 .llm-analysis-badge {
