@@ -6,6 +6,7 @@ from frontend.components import (
     load_logo_html,
     render_ingestion_table,
     render_ranking_table,
+    render_system_information_modal,
 )
 from frontend.styles import APP_CSS
 from schema import SEGMENT_WEIGHTS
@@ -55,11 +56,15 @@ def render_app() -> None:
                         <div class="brand-subtitle">NEXOVYRE</div>
                     </div>
                 </div>
-                <a
-                    class="export-button"
-                    href="data:application/pdf;base64,{pdf_base64}"
-                    download="ai_factory_growth_investor_report.pdf"
-                >
+                <div class="header-actions">
+                    <a class="about-button" href="#system-methodology" aria-label="About this system" title="About this system">
+                        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M11 17h2v-6h-2v6Zm1-15a10 10 0 1 0 0 20 10 10 0 0 0 0-20Zm0 18a8 8 0 1 1 0-16 8 8 0 0 1 0 16Zm-1-11h2V7h-2v2Z"/></svg>
+                    </a>
+                    <a
+                        class="export-button"
+                        href="data:application/pdf;base64,{pdf_base64}"
+                        download="ai_factory_growth_investor_report.pdf"
+                    >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"
                         width="20"
@@ -77,9 +82,11 @@ def render_app() -> None:
                         />
                     </svg>
                     <span>Export PDF</span>
-                </a>
+                    </a>
+                </div>
             </div>
         </div>
+        {render_system_information_modal()}
         """,
         unsafe_allow_html=True,
     )

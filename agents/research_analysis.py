@@ -22,7 +22,7 @@ from services.llm_client import ask_llm_json, is_llm_configured
 
 
 CACHE_TTL_SECONDS = 24 * 60 * 60
-MIN_REQUEST_INTERVAL_SECONDS = 3.5  # < 20 requests/minute on Gemini free tier
+MIN_REQUEST_INTERVAL_SECONDS = 3.5
 MAX_EVIDENCE_PER_ANALYSIS = 8
 MAX_RATIONALE_CHARACTERS = 600
 MAX_CITED_EVIDENCE = 3

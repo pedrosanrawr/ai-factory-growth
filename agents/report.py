@@ -46,6 +46,10 @@ def run(records: list[dict],
                 "growth_rationale": record.get("growth_rationale", ""),
                 "risk_rationale": record.get("risk_rationale", ""),
                 "_cached_llm_analysis": bool(record.get("_cached_llm_analysis")),
+                "gemini_enhanced": bool(
+                    record.get("_cached_llm_analysis")
+                    or record.get("_combined_llm_analysis")
+                ),
                 "source_links": record.get("source_links", ""),
                 # Research refresh / evidence visibility (added by the
                 # controlled quarterly research refresh process). These are
