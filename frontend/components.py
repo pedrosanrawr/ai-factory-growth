@@ -64,6 +64,56 @@ def load_logo_html(path: str = "assets/logo.png") -> str:
         return ""
 
 
+def render_system_information_modal() -> str:
+    """Render the teacher-facing methodology dialog for the dashboard header."""
+    return (
+        '<div id="system-methodology" class="profile-modal methodology-modal" '
+        'role="dialog" aria-modal="true" aria-labelledby="methodology-title">'
+        '<a class="profile-modal-backdrop" href="#" aria-label="Close system methodology"></a>'
+        '<div class="profile-modal-panel methodology-modal-panel" role="document">'
+        '<div class="profile-modal-topbar">'
+        '<div><span id="methodology-title" class="profile-modal-kicker">'
+        'About This System</span>'
+        '<span class="profile-modal-caption">Methodology, data flow, and quality controls</span></div>'
+        '<a class="profile-modal-close" href="#" aria-label="Close system methodology" '
+        'title="Close information">'
+        '<svg viewBox="0 0 24 24" aria-hidden="true"><path d="m6.7 5.3 12 12-1.4 1.4-12-12zM17.3 5.3l1.4 1.4-12 12-1.4-1.4z"/></svg></a>'
+        '</div>'
+        '<div class="profile-modal-body methodology-body">'
+        '<section class="methodology-intro">'
+        '<span class="methodology-eyebrow">AI FACTORY GROWTH IDENTIFICATION</span>'
+        '<h2>How the ranking is produced</h2>'
+        '<p>This decision-support system identifies and ranks public companies positioned to benefit from the global build-out of AI factories and hyperscale data centers over the next three years.</p>'
+        '</section>'
+        '<section class="methodology-section">'
+        '<div class="methodology-section-heading"><span>01</span><div><h3>AI Factory coverage</h3><p>Companies are classified by where they monetize infrastructure spending.</p></div></div>'
+        '<div class="methodology-chip-row">'
+        '<span>Compute / Server</span><span>Networking</span><span>Power Infrastructure</span>'
+        '<span>Cooling Systems</span><span>Engineering &amp; Construction</span></div></section>'
+        '<section class="methodology-section">'
+        '<div class="methodology-section-heading"><span>02</span><div><h3>Eight-agent LangGraph pipeline</h3><p>LangGraph coordinates a defined handoff from company inputs to an investor-ready report.</p></div></div>'
+        '<ol class="methodology-pipeline">'
+        '<li><strong>Company Ingestion</strong><small>Loads the curated public-company universe.</small></li>'
+        '<li><strong>Market Mapping</strong><small>Assigns the AI Factory segment and spend weight.</small></li>'
+        '<li><strong>Moat Analysis</strong><small>Assesses differentiation and ecosystem lock-in.</small></li>'
+        '<li><strong>Margin Analysis</strong><small>Normalizes operating-margin strength.</small></li>'
+        '<li><strong>Growth Forecast</strong><small>Estimates three-year AI-driven growth.</small></li>'
+        '<li><strong>Risk Adjustment</strong><small>Accounts for concentration, cyclicality, and execution risk.</small></li>'
+        '<li><strong>Ranking</strong><small>Calculates the Total AI Factory Growth Score.</small></li>'
+        '<li><strong>Report</strong><small>Presents the ordered Top 20 and company profiles.</small></li>'
+        '</ol></section>'
+        '<section class="methodology-section methodology-quality">'
+        '<div class="methodology-section-heading"><span>03</span><div><h3>Data, research, and validation</h3></div></div>'
+        '<div class="methodology-quality-grid">'
+        '<div><strong>Curated baseline</strong><p>The standard dashboard uses the approved CSV company universe for fast, repeatable scoring.</p></div>'
+        '<div><strong>Optional deep research</strong><p>SEC evidence and Gemini can enrich analysis when a research refresh is requested. Evidence remains reviewable.</p></div>'
+        '<div><strong>Cross-validation gate</strong><p>Before ranking, the workflow checks score ranges, risk values, evidence status, and citation references between agent handoffs.</p></div>'
+        '</div></section>'
+        '<div class="methodology-note"><strong>Important:</strong> This is an educational equity-research decision-support tool, not investment advice. Research marked for review requires human validation.</div>'
+        '</div></div></div>'
+    )
+
+
 def moat_dots(score: int) -> str:
     return "".join(
         f'<span class="dot {"active" if i < score else ""}"></span>'
@@ -356,18 +406,24 @@ def render_company_profile(row: dict, rank: int) -> str:
         f'<div class="source-links">{_source_links_html(row.get("source_links", ""))}</div></div>'
     )
     llm_badge = (
-        '<span class="llm-analysis-badge">AI Enriched</span>'
-        if row.get("_cached_llm_analysis")
+        '<span class="llm-analysis-badge">&#10022; Gemini Enhanced</span>'
+        if row.get("gemini_enhanced") or row.get("_cached_llm_analysis")
         else ""
     )
+    profile_prefix = '<div class="company-profile">'
+    if llm_badge:
+        profile_prefix += (
+            '<div class="profile-ai-enhanced-row">'
+            f'<span class="profile-ai-enhanced-snapshot">Research snapshot: {research_as_of}</span>'
+            f'{llm_badge}</div>'
+        )
 
-    return (
-        '<div class="company-profile">'
+    return profile_prefix + (
         '<div class="profile-heading">'
         f'<span class="profile-rank">#{rank}</span><div><div class="profile-company">{company}</div>'
         f'<div class="profile-role">{role}</div></div>'
-        f'<div class="profile-heading-status">{llm_badge}{research_status_badge(analysis_status, analysis_confidence)}'
-        f'<span class="research-as-of">Research snapshot: {research_as_of}</span></div>'
+        f'<div class="profile-heading-status">{research_status_badge(analysis_status, analysis_confidence)}'
+        '</div>'
         '</div>'
         f'<p class="profile-description">{description}</p>'
         '<div class="profile-metrics">'
